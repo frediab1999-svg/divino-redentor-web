@@ -97,6 +97,63 @@ Para cambiarla:
 
 > La imagen del hero es **decorativa**: usa `alt=""` y `aria-hidden="true"`. No le pongas alt descriptivo (sería redundante para lectores de pantalla). No cambies ese comportamiento sin motivo.
 
+## Fotos de personas (liderazgo)
+
+Cada persona en `PEOPLE` (dentro de `src/data/church.ts`) puede tener **una** foto en el campo `photo`. Esa foto se usa en **todas** las tarjetas donde la persona aparezca —en cada organización o ministerio en el que tenga un cargo— y en su modal de perfil. Se define **una sola vez**; no hay una foto por cargo.
+
+### Dónde guardar y cómo enlazar
+
+Igual que la galería, las fotos de personas van en `public/` y se enlazan con una ruta que empieza en `/` (sin `public`, sin `src`, sin `import`). Usa la carpeta `public/people/`:
+
+```
+public/
+└── people/
+    └── santiago-chay-perera.jpg
+```
+
+En `church.ts`, pon la ruta en el campo `photo`:
+
+```ts
+{
+  id: "santiago-chay-perera",
+  name: "Santiago Chay Perera",
+  photo: "/people/santiago-chay-perera.jpg",   // ← se define una vez
+  ecclesiasticalRole: "Pastor",
+  roles: [
+    { organization: CONSISTORIO, position: "Pastor Principal" },
+    { organization: CORO, position: "Integrante" },
+  ],
+}
+```
+
+> [!IMPORTANT]
+> La ruta empieza con `/people/...`. Todo lo que está en `public/` se sirve desde la raíz del sitio, así que `public/people/foto.jpg` se referencia como `/people/foto.jpg`.
+
+### Se propaga solo a todas las tarjetas
+
+No hay que repetir la foto ni configurar nada por cargo. En cuanto `photo` tiene una ruta válida:
+
+- Aparece en la tarjeta de la persona en **cada** organización o ministerio de su lista `roles`.
+- Aparece en su **modal de perfil**.
+- Se muestra en los tres tamaños de tarjeta (grande, primaria y compacta) según dónde salga.
+
+Si una persona **no** tiene `photo`, la tarjeta muestra un marcador visual (iniciales/ícono) en su lugar; es intencional y no rompe nada.
+
+### Recomendaciones técnicas
+
+- **Nombre del archivo**: usa el mismo `id` de la persona (kebab-case, sin acentos ni espacios), ej. `juan-daniel-mex-may.webp`. Así es fácil de ubicar.
+- **Tamaño**: 400–600 px de lado es suficiente (las tarjetas son pequeñas). Recorta a un encuadre cercano al cuadrado, centrado en el rostro.
+- **Formato y peso**: WebP o JPG optimizado, idealmente < 150 KB por foto.
+
+### Privacidad (obligatorio antes de publicar)
+
+> [!IMPORTANT]
+> Las fotos de personas son datos sensibles. Antes de asignar `photo`:
+
+- **Pide consentimiento** a la persona (o a sus padres/tutores si es menor).
+- Si una persona está como `visibility: "role-only"` o `"hidden"`, **no le pongas foto** (revelaría su identidad). Ver [CONTENT-GUIDE.md](CONTENT-GUIDE.md#privacidad-de-personas-muy-importante).
+- Ver también [Privacidad al subir fotos de personas](#privacidad-al-subir-fotos-de-personas) más abajo.
+
 ## Alt text: cómo escribirlo bien
 
 El **alt text** describe la imagen para personas que usan lectores de pantalla y para buscadores.

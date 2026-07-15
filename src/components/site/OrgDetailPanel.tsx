@@ -70,6 +70,7 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
                       person={p}
                       contextOrg={org!.label}
                       variant="featured"
+                      roleAbbrev={section.roleAbbrev}
                       onClick={() => select(p)}
                     />
                   ))}
@@ -97,6 +98,7 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
                       person={p}
                       contextOrg={org!.label}
                       variant="primary"
+                      roleAbbrev={section.roleAbbrev}
                       onClick={() => select(p)}
                     />
                   ))}
@@ -174,6 +176,28 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
                   </div>
                 ) : (
                   <p className="mt-3 text-sm text-muted-foreground italic">Encargado por definir.</p>
+                )}
+                {(campo.members ?? []).length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground mb-2">
+                      Colaboradores
+                    </p>
+                    <div className="space-y-2">
+                      {(campo.members ?? []).map((memberId) => {
+                        const member = getPersonById(memberId);
+                        if (!member) return null;
+                        return (
+                          <PersonCard
+                            key={memberId}
+                            person={member}
+                            contextOrg={campo.orgLabel}
+                            variant="secondary"
+                            onClick={() => select(member)}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
             );

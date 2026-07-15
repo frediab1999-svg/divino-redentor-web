@@ -189,14 +189,14 @@ export const PEOPLE: Person[] = [
     id: "santiago-chay-perera",
     name: "Santiago Chay Perera",
     ecclesiasticalRole: "Pastor",
-    roles: [{ organization: CONSISTORIO, position: "Pastor Principal" }],
+    roles: [{ organization: CONSISTORIO, position: "Pastor" }],
   },
   {
     id: "juan-daniel-mex-may",
     name: "Juan Daniel Mex May",
     ecclesiasticalRole: "Anciano",
     roles: [
-      { organization: CONSISTORIO, position: "Secretario" },
+      { organization: CONSISTORIO, position: "Secretario del H. Consistorio" },
       { organization: AUDIO, position: "Integrante" },
       { organization: ALABANZA_DOM, position: "Integrante", schedule: HORARIO_DOM },
     ],
@@ -206,22 +206,23 @@ export const PEOPLE: Person[] = [
     name: "José Humberto Escalante Coral",
     ecclesiasticalRole: "Anciano",
     roles: [
-      { organization: CONSISTORIO, position: "Educación" },
+      { organization: CONSISTORIO, position: "Ministro de Educación" },
       { organization: EFC, position: "Maestro", group: "Adultos", schedule: HORARIO_EFC },
+      { organization: JUVENIL, position: "Consejero" },
     ],
   },
   {
     id: "jose-sebastian-uitzil-can",
     name: "José Sebastián Uitzil Can",
     ecclesiasticalRole: "Anciano",
-    roles: [{ organization: CONSISTORIO, position: "Relaciones" }],
+    roles: [{ organization: CONSISTORIO, position: "Ministro de Relaciones" }],
   },
   {
     id: "francisco-uitzil-may",
     name: "Francisco Uitzil May",
     ecclesiasticalRole: "Anciano",
     roles: [
-      { organization: CONSISTORIO, position: "Relaciones" },
+      { organization: CONSISTORIO, position: "Ministro de Relaciones" },
       { organization: CAMPO_SITILPECH, position: "Encargado" },
       { organization: FEMENIL, position: "Consejero" },
     ],
@@ -231,7 +232,7 @@ export const PEOPLE: Person[] = [
     name: "Freddie Uitzil Uitz",
     ecclesiasticalRole: "Anciano",
     roles: [
-      { organization: CONSISTORIO, position: "Evangelismo" },
+      { organization: CONSISTORIO, position: "Ministro de Evangelismo" },
       { organization: CAMPO_TZON, position: "Anciano Encargado" },
     ],
   },
@@ -239,7 +240,7 @@ export const PEOPLE: Person[] = [
     id: "alan-darwin-uitzil-may",
     name: "Alan Darwin Uitzil May",
     ecclesiasticalRole: "Anciano",
-    roles: [{ organization: CONSISTORIO, position: "Recursos" }],
+    roles: [{ organization: CONSISTORIO, position: "Ministro de Recursos" }],
   },
 
   // ── ESCUELA DE FORMACIÓN CRISTIANA — DIRECTIVA ─────────────────────────────
@@ -419,7 +420,10 @@ export const PEOPLE: Person[] = [
     id: "maria-de-lourdes-pat-can",
     name: "María de Lourdes Pat Can",
     ecclesiasticalRole: "Miembro",
-    roles: [{ organization: FEMENIL, position: "Tesorera" }],
+    roles: [
+      { organization: FEMENIL, position: "Tesorera" },
+      { organization: CAMPO_TZON, position: "Maestra de niños" },
+    ],
   },
   {
     id: "martha-may-colli",
@@ -589,6 +593,7 @@ export type OrgCampo = {
   orgLabel: string; // organización del rol del encargado (para mostrar su cargo)
   personId: string;
   area?: string;
+  members?: string[]; // colaboradores adicionales (ids); su cargo sale de su rol en orgLabel
 };
 
 export type OrgSection = {
@@ -599,6 +604,7 @@ export type OrgSection = {
   compact?: boolean; // "people": el resto se muestra como tarjeta compacta
   groupOrder?: string[]; // "grouped": orden de los grupos
   campos?: OrgCampo[]; // "campos"
+  roleAbbrev?: string; // "people": abrevia el rol eclesiástico en la tarjeta e inlínea el cargo (ej. "A.I." en Ancianos, ya que el encabezado dice "Ancianos")
 };
 
 export type OrgConfig = {
@@ -623,24 +629,31 @@ export const ORGS: OrgConfig[] = [
     icon: "✝",
     logoLabel: "C",
     positionOrder: [
-      "Pastor Principal",
-      "Secretario",
-      "Educación",
-      "Relaciones",
-      "Evangelismo",
-      "Recursos",
+      "Pastor",
+      "Secretario del H. Consistorio",
+      "Ministro de Educación",
+      "Ministro de Relaciones",
+      "Ministro de Evangelismo",
+      "Ministro de Recursos",
     ],
     sections: [
       {
         heading: "Liderazgo",
         layout: "people",
-        heroPositions: ["Pastor Principal"],
-        positions: ["Pastor Principal"],
+        heroPositions: ["Pastor"],
+        positions: ["Pastor"],
       },
       {
         heading: "Ancianos",
         layout: "people",
-        positions: ["Secretario", "Educación", "Relaciones", "Evangelismo", "Recursos"],
+        roleAbbrev: "A.I.",
+        positions: [
+          "Secretario del H. Consistorio",
+          "Ministro de Educación",
+          "Ministro de Relaciones",
+          "Ministro de Evangelismo",
+          "Ministro de Recursos",
+        ],
       },
       {
         heading: "Campos",
@@ -651,6 +664,7 @@ export const ORGS: OrgConfig[] = [
             orgLabel: CAMPO_TZON,
             personId: "freddie-uitzil-uitz",
             area: "Evangelismo",
+            members: ["maria-de-lourdes-pat-can"],
           },
           { name: "Sitilpech", orgLabel: CAMPO_SITILPECH, personId: "francisco-uitzil-may" },
         ],
@@ -759,6 +773,7 @@ export const ORGS: OrgConfig[] = [
       "Evangelismo",
       "Relaciones",
       "Recursos",
+      "Consejero",
     ],
     sections: [
       {
@@ -772,6 +787,11 @@ export const ORGS: OrgConfig[] = [
         layout: "people",
         positions: ["Educación", "Evangelismo", "Relaciones", "Recursos"],
         compact: true,
+      },
+      {
+        heading: "Consejero",
+        layout: "people",
+        positions: ["Consejero"],
       },
     ],
   },
@@ -849,6 +869,27 @@ export const MINISTRIES: Ministry[] = [
     desc: "Niños y jóvenes que alaban al Señor con sus voces. Dirigido por la Ministra de Música.",
     icon: "👼",
     orgKey: CORO_INFANTIL,
+  },
+];
+
+// Agrupación visual de los ministerios en la sección pública.
+// Cada grupo muestra un título propio; los ministerios se listan por su `id`.
+export type MinistryGroup = {
+  id: string;
+  heading: string;
+  ministryIds: string[];
+};
+
+export const MINISTRY_GROUPS: MinistryGroup[] = [
+  {
+    id: "cantos-alabanza",
+    heading: "Ministerio de Cantos de Alabanza",
+    ministryIds: ["coro", "coro-infantil", "alabanza-domingos", "alabanza-sabados", "musica"],
+  },
+  {
+    id: "logistica",
+    heading: "Logística",
+    ministryIds: ["audio", "guardatemplo"],
   },
 ];
 

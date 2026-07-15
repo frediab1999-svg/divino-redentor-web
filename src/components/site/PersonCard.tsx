@@ -8,13 +8,24 @@ type Props = {
   contextOrg: string;
   onClick?: () => void;
   variant?: CardVariant;
+  // Si se define, se muestra esta abreviatura del rol (dorado) e inlínea el cargo,
+  // en vez del rol eclesiástico completo (ej. "A.I." para ancianos).
+  roleAbbrev?: string;
 };
 
-export function PersonCard({ person, contextOrg, onClick, variant = "primary" }: Props) {
+export function PersonCard({
+  person,
+  contextOrg,
+  onClick,
+  variant = "primary",
+  roleAbbrev,
+}: Props) {
   const displayName = getDisplayName(person);
   const displayPos = getDisplayPosition(person, contextOrg);
   const role: PersonRole | undefined = person.roles.find((r) => r.organization === contextOrg);
-  const subtitle = [displayPos, role?.group].filter(Boolean).join(" · ");
+  // Evita repetir el cargo cuando coincide con el rol eclesiástico (ej. Pastor / Pastor).
+  const posLabel = displayPos && displayPos !== person.ecclesiasticalRole ? displayPos : undefined;
+  const subtitle = [posLabel, role?.group].filter(Boolean).join(" · ");
   const hasMultipleRoles = person.roles.length > 1;
   const isAnonymous = person.visibility === "role-only";
 
@@ -48,8 +59,17 @@ export function PersonCard({ person, contextOrg, onClick, variant = "primary" }:
           )}
         </div>
         <h4 className="font-display text-2xl text-primary leading-tight">{displayName}</h4>
-        <p className="mt-1.5 text-sm font-medium text-gold">{person.ecclesiasticalRole}</p>
-        {subtitle && <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>}
+        {roleAbbrev ? (
+          <p className="mt-1.5 text-sm leading-relaxed">
+            <span className="font-medium text-gold">{roleAbbrev}</span>
+            {subtitle && <span className="text-muted-foreground"> {subtitle}</span>}
+          </p>
+        ) : (
+          <>
+            <p className="mt-1.5 text-sm font-medium text-gold">{person.ecclesiasticalRole}</p>
+            {subtitle && <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>}
+          </>
+        )}
         {hasMultipleRoles && (
           <p className="mt-3 text-xs text-gold/80 opacity-0 group-hover:opacity-100 transition-opacity">
             Ver todos los cargos →
@@ -105,8 +125,17 @@ export function PersonCard({ person, contextOrg, onClick, variant = "primary" }:
         )}
       </div>
       <h4 className="font-display text-base text-primary leading-tight">{displayName}</h4>
-      <p className="mt-1 text-xs font-medium text-gold">{person.ecclesiasticalRole}</p>
-      {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+      {roleAbbrev ? (
+        <p className="mt-1 text-xs leading-relaxed">
+          <span className="font-medium text-gold">{roleAbbrev}</span>
+          {subtitle && <span className="text-muted-foreground"> {subtitle}</span>}
+        </p>
+      ) : (
+        <>
+          <p className="mt-1 text-xs font-medium text-gold">{person.ecclesiasticalRole}</p>
+          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+        </>
+      )}
     </button>
   );
 }

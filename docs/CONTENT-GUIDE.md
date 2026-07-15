@@ -131,7 +131,7 @@ Cada persona se ve así:
 |-------|--------|
 | `id` | Identificador único (kebab-case). No repetir. |
 | `name` | Nombre que se mostrará (si la visibilidad lo permite). |
-| `photo` | Ruta de la foto (opcional). Ver [IMAGES-GUIDE.md](IMAGES-GUIDE.md). |
+| `photo` | Ruta de la foto (opcional), ej. `/people/nombre.jpg`. Se define una vez y aparece en **todas** las tarjetas y el modal de la persona. Cómo agregarla: [IMAGES-GUIDE.md → Fotos de personas](IMAGES-GUIDE.md#fotos-de-personas-liderazgo). |
 | `ecclesiasticalRole` | Rol eclesiástico (`Pastor`, `Anciano`, `Diácono`, `Miembro`). |
 | `roles` | Uno o más cargos. Cada cargo indica a qué `organization` pertenece y su `position`. Puede incluir `group` y `schedule`. |
 
@@ -145,6 +145,41 @@ roles: [
 ```
 
 > El valor de `organization` debe coincidir **exactamente** con el `label` de una organización en `ORGS` (para liderazgo) o con el `orgKey` de un ministerio en `MINISTRIES`. Un error de texto hace que la persona no aparezca.
+
+### Agregar a una persona a otra organización (paso a paso)
+
+Ejemplo: el pastor ya está en el Consistorio y ahora **además** entra al Coro.
+
+1. Busca a la persona en `PEOPLE`.
+2. Agrega **un objeto más** a su arreglo `roles` (no borres el que ya tenía):
+
+```ts
+{
+  id: "santiago-chay-perera",
+  name: "Santiago Chay Perera",
+  ecclesiasticalRole: "Pastor",
+  roles: [
+    { organization: CONSISTORIO, position: "Pastor Principal" },
+    { organization: CORO, position: "Integrante" }, // ← única línea que se agrega
+  ],
+},
+```
+
+Eso es **todo**. No se toca ningún otro archivo ni se activa nada más: el sitio deriva el resto solo a partir de `roles`.
+
+| Se hace solo | Cómo |
+|---|---|
+| El **punto dorado** en su tarjeta ("participa en varios ministerios") | Aparece automáticamente en cuanto `roles` tiene 2 o más entradas. |
+| Aparecer también en la nueva organización (el Coro) | Los componentes filtran a las personas por `organization`. |
+| El modal de la persona lista **todos** sus cargos | Se arma desde el mismo arreglo `roles`. |
+
+> No existe ninguna bandera manual para el punto ni para "está en varias organizaciones": **todo se calcula desde `roles`**. Solo agregas la línea del cargo.
+
+**Cuidados:**
+
+- Usa la **constante** que ya existe para esa organización (ej. `CORO`, `AUDIO`, `CONSISTORIO`), definida al inicio de `church.ts`. Si escribes el texto a mano, debe ser idéntico al `label` de `ORGS` o al `orgKey` de `MINISTRIES`.
+- Si la organización es de **liderazgo** (no un ministerio), el `position` debe existir en las `positions` de alguna sección de esa organización; de lo contrario la persona **no se mostrará** ahí (ver [Estructura de cada organización](#estructura-de-cada-organización-secciones)). Los **ministerios** muestran a todos sus integrantes sin ese requisito.
+- Al terminar, corre `npm run check:data` para confirmar que el enlace quedó bien.
 
 ### Privacidad de personas (muy importante)
 
@@ -210,7 +245,7 @@ El orden, los encabezados y el tamaño de las tarjetas se controlan en `ORGS`, n
 | `positions` | Cargos incluidos en la sección, en orden. |
 | `compact` | `true` = tarjetas compactas. |
 | `groupOrder` | En `layout: "grouped"`, orden de los grupos (ej. Preescolar → Adultos). |
-| `campos` | En `layout: "campos"`, lista de `{ name, orgLabel, personId, area? }`. |
+| `campos` | En `layout: "campos"`, lista de `{ name, orgLabel, personId, area?, members? }`. `personId` es el encargado; `members` (opcional) son ids de colaboradores extra que se muestran bajo el encargado con el encabezado "Colaboradores" (su cargo sale de su rol en `orgLabel`). |
 
 Normalmente basta con dar a la persona un `position` que ya exista en las `positions` de alguna sección. Cambiar la estructura de secciones sí requiere cuidado (o pídelo como cambio).
 
@@ -338,9 +373,12 @@ Después de cualquier cambio en `church.ts`:
    ```bash
    npm run dev
    ```
-3. **Verifica los enlaces** que dependen de coincidencias de texto:
-   - `roles[].organization` ↔ `ORGS[].label` / `MINISTRIES[].orgKey`.
-   - Que ninguna persona privada (`role-only` / `hidden`) muestre el nombre por error.
+3. **Verifica los enlaces automáticamente** con el validador de datos:
+   ```bash
+   npm run check:data
+   ```
+   Revisa que cada `roles[].organization` coincida con `ORGS[].label` / `MINISTRIES[].orgKey`, que los `personId` de los campos existan y no estén ocultos, y avisa si una persona no se mostrará porque su cargo no está en ninguna sección. Un `✖` (error) hay que corregirlo; un `⚠` (aviso) conviene revisarlo.
+   - Lo que el validador **no** juzga: confirma tú mismo que ninguna persona privada (`role-only` / `hidden`) muestre el nombre por error.
 4. **Corre lint y build** antes de subir:
    ```bash
    npm run lint

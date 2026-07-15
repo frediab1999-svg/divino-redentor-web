@@ -1,5 +1,11 @@
 import { useRef, useState } from "react";
-import { MINISTRIES, getPeopleByOrg, type Ministry, type Person } from "@/data/church";
+import {
+  MINISTRIES,
+  MINISTRY_GROUPS,
+  getPeopleByOrg,
+  type Ministry,
+  type Person,
+} from "@/data/church";
 import { useHistoryModal } from "@/hooks/use-history-modal";
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
@@ -33,6 +39,8 @@ export function MinistriesSection() {
   const closeMinistry = () => closeLayer(() => setSelectedMinistry(null));
   const closePerson = () => closeLayer(() => setSelectedPerson(null));
 
+  const ministriesById = new Map(MINISTRIES.map((m) => [m.id, m]));
+
   return (
     <>
       <section id="ministerios" className="py-24 px-6 lg:px-10 bg-secondary/30">
@@ -45,37 +53,59 @@ export function MinistriesSection() {
             />
           </AnimatedSection>
 
-          <div className="grid sm:grid-cols-2 gap-3">
-            {MINISTRIES.map((m, i) => {
-              const members = getPeopleByOrg(m.orgKey);
+          <div className="space-y-12">
+            {MINISTRY_GROUPS.map((group) => {
+              const items = group.ministryIds
+                .map((id) => ministriesById.get(id))
+                .filter((m): m is Ministry => Boolean(m));
+              if (items.length === 0) return null;
+
               return (
-                <AnimatedSection key={m.id} delay={i * 60} className="h-full min-w-0">
-                  <button
-                    type="button"
-                    onClick={() => openMinistry(m)}
-                    className="group h-full w-full text-left flex items-start gap-4 bg-card border border-border rounded-lg p-5 transition-colors hover:border-primary/30 hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
-                  >
-                    <span className="shrink-0 h-11 w-11 rounded-lg bg-secondary text-primary group-hover:text-gold flex items-center justify-center transition-colors">
-                      <MinistryIcon id={m.id} className="h-5 w-5" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline justify-between gap-3">
-                        <h3 className="min-w-0 font-display text-base text-primary leading-tight">
-                          {m.name}
-                        </h3>
-                        <span className="shrink-0 text-xs text-muted-foreground">
-                          {members.length}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                        {m.desc}
-                      </p>
-                      <p className="mt-2 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity">
-                        Ver integrantes →
-                      </p>
+                <div key={group.id}>
+                  <AnimatedSection>
+                    <div className="mb-5">
+                      <h3 className="font-display text-xl md:text-2xl text-primary leading-tight">
+                        {group.heading}
+                      </h3>
+                      <div className="mt-2 h-px w-12 bg-gold" />
                     </div>
-                  </button>
-                </AnimatedSection>
+                  </AnimatedSection>
+
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {items.map((m, i) => {
+                      const members = getPeopleByOrg(m.orgKey);
+                      return (
+                        <AnimatedSection key={m.id} delay={i * 60} className="h-full min-w-0">
+                          <button
+                            type="button"
+                            onClick={() => openMinistry(m)}
+                            className="group h-full w-full text-left flex items-start gap-4 bg-card border border-border rounded-lg p-5 transition-colors hover:border-primary/30 hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+                          >
+                            <span className="shrink-0 h-11 w-11 rounded-lg bg-secondary text-primary group-hover:text-gold flex items-center justify-center transition-colors">
+                              <MinistryIcon id={m.id} className="h-5 w-5" />
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-baseline justify-between gap-3">
+                                <h3 className="min-w-0 font-display text-base text-primary leading-tight">
+                                  {m.name}
+                                </h3>
+                                <span className="shrink-0 text-xs text-muted-foreground">
+                                  {members.length}
+                                </span>
+                              </div>
+                              <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                                {m.desc}
+                              </p>
+                              <p className="mt-2 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity">
+                                Ver integrantes →
+                              </p>
+                            </div>
+                          </button>
+                        </AnimatedSection>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
