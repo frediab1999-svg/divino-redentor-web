@@ -1,0 +1,2 @@
+Coloca aquí las fotos de la galería (WebP o JPG, máx ~1600px de ancho, <300KB).
+Luego enlázalas en GALLERY_PHOTOS dentro de src/data/church.ts usando la ruta /gallery/nombre-archivo.webp

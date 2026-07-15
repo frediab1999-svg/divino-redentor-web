@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ORGS,
   getOrgPeople,
@@ -7,6 +7,7 @@ import {
   type OrgConfig,
   type Person,
 } from "@/data/church";
+import { useHistoryModal } from "@/hooks/use-history-modal";
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
 import { OrgDetailPanel } from "./OrgDetailPanel";
@@ -59,7 +60,7 @@ function OrgCard({
               {org.label}
             </h3>
             <span className="shrink-0 text-xs text-muted-foreground">
-              {people.length} {people.length === 1 ? "integrante" : "integrantes"}
+              {org.countLabel ?? `${people.length} ${people.length === 1 ? "integrante" : "integrantes"}`}
             </span>
           </div>
 
@@ -91,6 +92,30 @@ export function LeadershipSection() {
   const [selectedOrg, setSelectedOrg] = useState<OrgConfig | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
+  // Refs para leer el estado más reciente dentro del manejador de "Atrás".
+  const orgRef = useRef(selectedOrg);
+  orgRef.current = selectedOrg;
+  const personRef = useRef(selectedPerson);
+  personRef.current = selectedPerson;
+
+  const { pushLayer, closeLayer } = useHistoryModal(() => {
+    // Botón "Atrás": cierra primero el perfil; si no hay, cierra la organización.
+    if (personRef.current) setSelectedPerson(null);
+    else if (orgRef.current) setSelectedOrg(null);
+  });
+
+  const openOrg = (org: OrgConfig) => {
+    setSelectedOrg(org);
+    pushLayer();
+  };
+  // El perfil se abre ENCIMA del panel de la organización (no lo cierra).
+  const openPerson = (p: Person) => {
+    setSelectedPerson(p);
+    pushLayer();
+  };
+  const closeOrg = () => closeLayer(() => setSelectedOrg(null));
+  const closePerson = () => closeLayer(() => setSelectedPerson(null));
+
   const governing = ORGS.find((o) => o.id === "consistorio");
   const rest = ORGS.filter((o) => o.id !== "consistorio");
 
@@ -119,12 +144,7 @@ export function LeadershipSection() {
 
           <div className="space-y-5">
             {governing && (
-              <OrgCard
-                org={governing}
-                featured
-                onClick={() => setSelectedOrg(governing)}
-                delay={0}
-              />
+              <OrgCard org={governing} featured onClick={() => openOrg(governing)} delay={0} />
             )}
 
             <div className="grid sm:grid-cols-2 gap-4">
@@ -132,7 +152,7 @@ export function LeadershipSection() {
                 <OrgCard
                   key={org.id}
                   org={org}
-                  onClick={() => setSelectedOrg(org)}
+                  onClick={() => openOrg(org)}
                   delay={(i + 1) * 80}
                 />
               ))}
@@ -143,14 +163,12 @@ export function LeadershipSection() {
 
       <OrgDetailPanel
         org={selectedOrg}
-        onClose={() => setSelectedOrg(null)}
-        onSelectPerson={(p) => {
-          setSelectedOrg(null);
-          setSelectedPerson(p);
-        }}
+        active={!selectedPerson}
+        onClose={closeOrg}
+        onSelectPerson={openPerson}
       />
 
-      <ProfileModal person={selectedPerson} onClose={() => setSelectedPerson(null)} />
+      <ProfileModal person={selectedPerson} onClose={closePerson} />
     </>
   );
 }

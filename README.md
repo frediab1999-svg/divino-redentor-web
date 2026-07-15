@@ -31,8 +31,10 @@ El sitio está pensado para ser fácil de mantener: **todo el contenido vive en 
 
 ```
 .
+├── public/
+│   └── gallery/           # Fotos de la galería (se enlazan como /gallery/...)
 ├── src/
-│   ├── assets/            # Imágenes estáticas (logo, hero)
+│   ├── assets/            # Imágenes estáticas del diseño (logo, hero) — vía import
 │   ├── components/
 │   │   ├── ui/            # Componentes base shadcn/ui — NO modificar
 │   │   └── site/          # Componentes propios del sitio
@@ -76,7 +78,7 @@ npm install
 ## Comandos
 
 ```bash
-npm run dev       # Servidor de desarrollo (http://localhost:3000 por defecto)
+npm run dev       # Servidor de desarrollo (http://localhost:8080 por defecto)
 npm run build     # Build de producción (target: Cloudflare Workers)
 npm run preview   # Previsualiza el build de producción localmente
 npm run lint      # Revisa el código con ESLint

@@ -30,7 +30,27 @@ export function HistoryTimeline() {
                 <h3 className="mt-1.5 font-display text-2xl md:text-3xl text-primary leading-tight">
                   {block.title}
                 </h3>
-                <p className="mt-3 text-muted-foreground leading-relaxed">{block.text}</p>
+                <div className="mt-3 space-y-4">
+                  {block.content.map((item, k) =>
+                    item.type === "quote" ? (
+                      <blockquote
+                        key={k}
+                        className="border-l-2 border-gold pl-4 py-1 my-2"
+                      >
+                        <p className="font-display text-lg md:text-xl text-primary/90 leading-snug italic">
+                          &ldquo;{item.text}&rdquo;
+                        </p>
+                        <cite className="mt-1.5 block not-italic text-xs uppercase tracking-[0.18em] text-gold">
+                          {item.author}
+                        </cite>
+                      </blockquote>
+                    ) : (
+                      <p key={k} className="text-muted-foreground leading-relaxed">
+                        {item.text}
+                      </p>
+                    ),
+                  )}
+                </div>
 
                 {/* Imágenes reales cuando existan (overlay caliza sutil) */}
                 {block.images && block.images.length > 0 && (

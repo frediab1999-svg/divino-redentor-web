@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MINISTRIES, getPeopleByOrg, type Ministry, type Person } from "@/data/church";
+import { useHistoryModal } from "@/hooks/use-history-modal";
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
 import { MinistryIcon } from "./section-icons";
@@ -9,6 +10,28 @@ import { ProfileModal } from "./ProfileModal";
 export function MinistriesSection() {
   const [selectedMinistry, setSelectedMinistry] = useState<Ministry | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+
+  const ministryRef = useRef(selectedMinistry);
+  ministryRef.current = selectedMinistry;
+  const personRef = useRef(selectedPerson);
+  personRef.current = selectedPerson;
+
+  const { pushLayer, closeLayer } = useHistoryModal(() => {
+    if (personRef.current) setSelectedPerson(null);
+    else if (ministryRef.current) setSelectedMinistry(null);
+  });
+
+  const openMinistry = (m: Ministry) => {
+    setSelectedMinistry(m);
+    pushLayer();
+  };
+  // El perfil se abre ENCIMA del modal de ministerio (no lo cierra).
+  const openPerson = (p: Person) => {
+    setSelectedPerson(p);
+    pushLayer();
+  };
+  const closeMinistry = () => closeLayer(() => setSelectedMinistry(null));
+  const closePerson = () => closeLayer(() => setSelectedPerson(null));
 
   return (
     <>
@@ -29,7 +52,7 @@ export function MinistriesSection() {
                 <AnimatedSection key={m.id} delay={i * 60} className="h-full">
                   <button
                     type="button"
-                    onClick={() => setSelectedMinistry(m)}
+                    onClick={() => openMinistry(m)}
                     className="group h-full w-full text-left flex items-start gap-4 bg-card border border-border rounded-lg p-5 transition-colors hover:border-primary/30 hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
                   >
                     <span className="shrink-0 h-11 w-11 rounded-lg bg-secondary text-primary group-hover:text-gold flex items-center justify-center transition-colors">
@@ -61,15 +84,13 @@ export function MinistriesSection() {
 
       <MinistryModal
         ministry={selectedMinistry}
+        active={!selectedPerson}
         members={selectedMinistry ? getPeopleByOrg(selectedMinistry.orgKey) : []}
-        onClose={() => setSelectedMinistry(null)}
-        onSelectPerson={(p) => {
-          setSelectedMinistry(null);
-          setSelectedPerson(p);
-        }}
+        onClose={closeMinistry}
+        onSelectPerson={openPerson}
       />
 
-      <ProfileModal person={selectedPerson} onClose={() => setSelectedPerson(null)} />
+      <ProfileModal person={selectedPerson} onClose={closePerson} />
     </>
   );
 }

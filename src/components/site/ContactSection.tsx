@@ -1,7 +1,7 @@
-import { SCHEDULE, LOCATION, WHATSAPP_URL } from "@/data/church";
+import { SCHEDULE, LOCATION, WHATSAPP_URL, FACEBOOK_URL } from "@/data/church";
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
-import { MapPinIcon, WhatsAppIcon } from "./section-icons";
+import { MapPinIcon, WhatsAppIcon, FacebookIcon } from "./section-icons";
 
 // Vista visual tipo mapa (inspiración Stitch). Sin iframe real ni librerías:
 // fondo navy + líneas sutiles + tarjeta flotante. Enlaza a LOCATION.mapsUrl.
@@ -104,16 +104,26 @@ export function ContactSection() {
             <AnimatedSection delay={160}>
               <div className="bg-card border border-border rounded-lg p-7">
                 <p className="text-xs uppercase tracking-[0.25em] text-gold mb-4">Contáctanos</p>
-                <a
-                  href={WHATSAPP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors text-sm"
-                >
-                  <WhatsAppIcon className="h-4 w-4" />
-                  Enviar mensaje por WhatsApp
-                </a>
-                <p className="mt-4 text-xs text-muted-foreground">Redes sociales: próximamente</p>
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+                  <a
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors text-sm"
+                  >
+                    <WhatsAppIcon className="h-4 w-4" />
+                    Mensaje por WhatsApp
+                  </a>
+                  <a
+                    href={FACEBOOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 border border-primary/30 text-primary px-6 py-3 rounded-md font-medium hover:bg-primary/5 transition-colors text-sm"
+                  >
+                    <FacebookIcon className="h-4 w-4" />
+                    Síguenos en Facebook
+                  </a>
+                </div>
               </div>
             </AnimatedSection>
           </div>

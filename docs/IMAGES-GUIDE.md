@@ -4,18 +4,22 @@ Cómo agregar fotos al sitio de forma correcta: dónde guardarlas, cómo nombrar
 
 ## Dónde guardar las imágenes
 
-Las imágenes estáticas viven en `src/assets/`:
+Hay **dos ubicaciones** según el uso:
 
 ```
+public/
+└── gallery/            # Fotos de la GALERÍA → se enlazan con /gallery/archivo.jpg
+
 src/assets/
-├── logo-edr.png        # Logo de la iglesia
-├── hero/
-│   └── hero-cross.jpg  # Imagen de fondo del hero
-└── gallery/            # (crear) fotos de la galería
+├── logo-edr.png        # Logo de la iglesia (import)
+└── hero/
+    └── hero-cross.jpg  # Imagen de fondo del hero (import)
 ```
 
-- Crea subcarpetas por propósito: `gallery/`, `hero/`, `history/`, etc.
-- Las imágenes en `src/assets/` se **importan** en el código y Vite las optimiza y versiona automáticamente.
+- **Galería → `public/gallery/`**: es la forma más sencilla. Dejas el archivo en esa carpeta y en `GALLERY_PHOTOS` (dentro de `src/data/church.ts`) pones la ruta `/gallery/nombre-archivo`. No hay que escribir `import`.
+- **Logo y hero → `src/assets/`**: se **importan** en el código (ej. `import heroCross from "@/assets/hero/hero-cross.jpg"`) y Vite los optimiza y versiona automáticamente.
+
+> Regla práctica: fotos de galería → `public/gallery/`; imágenes fijas del diseño (logo, hero) → `src/assets/` con `import`.
 
 ## Cómo nombrar los archivos
 
@@ -57,18 +61,26 @@ Imágenes ligeras = sitio más rápido, mejor experiencia y menor costo de ancho
 
 ## Agregar fotos a la galería
 
-1. Guarda las imágenes optimizadas en `src/assets/gallery/`.
-2. Abre `src/data/church.ts` y busca `GALLERY_PHOTOS`.
-3. Reemplaza el `src: ""` (placeholder) por la **ruta importada con el alias `@`**:
+1. Optimiza las imágenes (ver arriba: WebP/JPG, ~1200–1600 px, < 300 KB).
+2. Cópialas en `public/gallery/`.
+3. Abre `src/data/church.ts`, busca `GALLERY_PHOTOS` y agrega (o edita) una fila con la ruta `/gallery/nombre-archivo`:
 
 ```ts
-{ id: "g1", src: "/src/assets/gallery/culto-dominical-2024.webp", alt: "Culto dominical", category: "culto", year: 2024 },
+{
+  id: "g1",
+  src: "/gallery/culto-dominical-2025.jpg",
+  alt: "Congregación reunida en oración durante el culto",
+  category: "culto",
+  year: 2025,
+},
 ```
 
-> [!NOTE]
-> La forma exacta de referenciar la imagen (import directo vs. ruta) depende de cómo esté implementado `GallerySection`. La práctica más segura, consistente con el hero y el logo, es **importar la imagen al inicio de un archivo** y pasar la variable. Si al agregar una ruta la imagen no aparece, revisa cómo se importan `logo-edr.png` y `hero-cross.jpg` en `src/routes/index.tsx` y sigue el mismo patrón, o pídelo como cambio puntual.
+> [!IMPORTANT]
+> La ruta empieza con `/gallery/...` (sin `public`, sin `src`). Todo lo que está en `public/` se sirve desde la raíz del sitio, así que `public/gallery/foto.jpg` se referencia como `/gallery/foto.jpg`.
 
-Mientras un elemento de la galería tenga `src: ""`, el sitio muestra un **placeholder visual** en su lugar (comportamiento intencional).
+- El `id` debe ser único (`g1`, `g2`, …).
+- La `category` coloca la foto en los filtros: `culto`, `celebracion`, `comunidad`, `jovenes`, `ninos`.
+- Mientras un elemento tenga `src: ""`, el sitio muestra un **placeholder visual** en su lugar (comportamiento intencional).
 
 ## Agregar / cambiar la imagen del hero
 

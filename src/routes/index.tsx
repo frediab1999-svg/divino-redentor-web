@@ -57,9 +57,9 @@ function Home() {
             <div className="mx-auto mt-6 h-px w-16 bg-gold" />
 
             <p className="mt-6 max-w-2xl mx-auto text-foreground/75 leading-relaxed text-lg">
-              Te damos la bienvenida a nuestra congregación, una comunidad de fe, esperanza y amor
-              donde cada persona es recibida con los brazos abiertos para conocer al Señor
-              Jesucristo, nuestro Divino Redentor.
+              Te damos la bienvenida a nuestra iglesia, una comunidad de fe, esperanza y amor, donde
+              cada persona es recibida con los brazos abiertos para conocer al Señor Jesucristo,
+              nuestro Salvador.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">

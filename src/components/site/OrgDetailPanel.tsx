@@ -1,67 +1,195 @@
 import { useEffect } from "react";
-import type { OrgConfig, Person } from "@/data/church";
-import { getOrgPeople, getRoleInOrg } from "@/data/church";
+import type { OrgConfig, OrgSection, Person } from "@/data/church";
+import { getOrgPeople, getRoleInOrg, getPersonById } from "@/data/church";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 import { PersonCard } from "./PersonCard";
 
 type Props = {
   org: OrgConfig | null;
   onClose: () => void;
   onSelectPerson: (p: Person) => void;
+  // false cuando hay un perfil abierto encima: desactiva su tecla Escape.
+  active?: boolean;
 };
 
-export function OrgDetailPanel({ org, onClose, onSelectPerson }: Props) {
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs uppercase tracking-[0.25em] text-gold text-center mb-4">{children}</p>
+  );
+}
+
+export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: Props) {
   useEffect(() => {
-    if (!org) return;
+    if (!org || !active) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [org, onClose]);
+  }, [org, active, onClose]);
 
-  useEffect(() => {
-    document.body.style.overflow = org ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [org]);
+  useBodyScrollLock(!!org);
 
   if (!org) return null;
 
   const allPeople = getOrgPeople(org);
+  const select = (p: Person) => onSelectPerson(p);
 
-  const featured = allPeople.filter((p) => {
-    const pos = getRoleInOrg(p, org.label)?.position ?? "";
-    return org.featuredPositions.some((fp) => pos.startsWith(fp));
-  });
+  // ── Renderizado de cada tipo de sección ──────────────────────────────────
+  function renderPeople(section: OrgSection) {
+    const positions = section.positions ?? [];
+    const inSection = allPeople.filter((p) => {
+      const pos = getRoleInOrg(p, org!.label)?.position ?? "";
+      return positions.some((sp) => pos.startsWith(sp));
+    });
 
-  const primary = allPeople.filter((p) => {
-    const pos = getRoleInOrg(p, org.label)?.position ?? "";
+    const isHero = (p: Person) => {
+      const pos = getRoleInOrg(p, org!.label)?.position ?? "";
+      return (section.heroPositions ?? []).some((hp) => pos.startsWith(hp));
+    };
+    const heroes = inSection.filter(isHero);
+    const others = inSection.filter((p) => !isHero(p));
+
     return (
-      !org.featuredPositions.some((fp) => pos.startsWith(fp)) &&
-      org.primaryPositions.some((pp) => pos.startsWith(pp))
+      <>
+        <SectionHeading>{section.heading}</SectionHeading>
+        {inSection.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center italic py-2">
+            Información por definir.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {heroes.length > 0 && (
+              <div className="flex justify-center">
+                <div
+                  className={`grid gap-4 w-full ${heroes.length >= 2 ? "grid-cols-2" : "grid-cols-1"} max-w-xs sm:max-w-sm`}
+                >
+                  {heroes.map((p) => (
+                    <PersonCard
+                      key={p.id}
+                      person={p}
+                      contextOrg={org!.label}
+                      variant="featured"
+                      onClick={() => select(p)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {others.length > 0 &&
+              (section.compact ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {others.map((p) => (
+                    <PersonCard
+                      key={p.id}
+                      person={p}
+                      contextOrg={org!.label}
+                      variant="secondary"
+                      onClick={() => select(p)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {others.map((p) => (
+                    <PersonCard
+                      key={p.id}
+                      person={p}
+                      contextOrg={org!.label}
+                      variant="primary"
+                      onClick={() => select(p)}
+                    />
+                  ))}
+                </div>
+              ))}
+          </div>
+        )}
+      </>
     );
-  });
+  }
 
-  const secondary = allPeople.filter((p) => {
-    const pos = getRoleInOrg(p, org.label)?.position ?? "";
+  function renderGrouped(section: OrgSection) {
+    const withGroup = allPeople.filter((p) => getRoleInOrg(p, org!.label)?.group);
+    const groups = section.groupOrder ?? [];
+    const grouped = withGroup.reduce<Record<string, Person[]>>((acc, p) => {
+      const g = getRoleInOrg(p, org!.label)?.group ?? "General";
+      (acc[g] ??= []).push(p);
+      return acc;
+    }, {});
+    // Grupos en el orden configurado; cualquier grupo extra se agrega al final.
+    const ordered = [
+      ...groups.filter((g) => grouped[g]),
+      ...Object.keys(grouped).filter((g) => !groups.includes(g)),
+    ];
+
     return (
-      !org.featuredPositions.some((fp) => pos.startsWith(fp)) &&
-      !org.primaryPositions.some((pp) => pos.startsWith(pp))
+      <>
+        <SectionHeading>{section.heading}</SectionHeading>
+        <div className="space-y-6">
+          {ordered.map((group) => (
+            <div key={group}>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
+                {group}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {grouped[group].map((p) => (
+                  <PersonCard
+                    key={p.id}
+                    person={p}
+                    contextOrg={org!.label}
+                    variant="secondary"
+                    onClick={() => select(p)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
     );
-  });
+  }
 
-  // For orgs with groups (EFC), separate teachers by group
-  const hasGroups = org.groupsLabel && secondary.some((p) => getRoleInOrg(p, org.label)?.group);
+  function renderCampos(section: OrgSection) {
+    const campos = section.campos ?? [];
+    return (
+      <>
+        <SectionHeading>{section.heading}</SectionHeading>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {campos.map((campo) => {
+            const person = getPersonById(campo.personId);
+            return (
+              <div key={campo.name} className="rounded-lg border border-border bg-card/40 p-4">
+                <p className="font-display text-primary text-base leading-tight">{campo.name}</p>
+                {campo.area && (
+                  <p className="mt-0.5 text-xs text-gold">Área: {campo.area}</p>
+                )}
+                {person ? (
+                  <div className="mt-3">
+                    <PersonCard
+                      person={person}
+                      contextOrg={campo.orgLabel}
+                      variant="secondary"
+                      onClick={() => select(person)}
+                    />
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-muted-foreground italic">Encargado por definir.</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
 
-  const groupedSecondary = hasGroups
-    ? secondary.reduce<Record<string, Person[]>>((acc, p) => {
-        const group = getRoleInOrg(p, org.label)?.group ?? "General";
-        if (!acc[group]) acc[group] = [];
-        acc[group].push(p);
-        return acc;
-      }, {})
-    : null;
+  function renderSection(section: OrgSection) {
+    if (section.layout === "grouped") return renderGrouped(section);
+    if (section.layout === "campos") return renderCampos(section);
+    return renderPeople(section);
+  }
+
+  const descriptionParagraphs = org.description.split("\n\n");
 
   return (
     <div
@@ -103,119 +231,29 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson }: Props) {
           </button>
         </div>
 
-        <p className="px-6 pt-4 pb-2 text-sm text-muted-foreground leading-relaxed shrink-0">
-          {org.description}
-        </p>
+        {/* Descripción + base bíblica */}
+        <div className="px-6 pt-4 pb-2 shrink-0">
+          {descriptionParagraphs.map((p, i) => (
+            <p key={i} className="text-sm text-muted-foreground leading-relaxed [&:not(:first-child)]:mt-2">
+              {p}
+            </p>
+          ))}
+          {org.bibleRefs && (
+            <p className="mt-3 text-xs text-primary/80">
+              <span className="uppercase tracking-[0.15em] text-gold">Base bíblica:</span>{" "}
+              {org.bibleRefs}
+            </p>
+          )}
+        </div>
 
-        {/* Scrollable body */}
-        <div className="overflow-y-auto px-6 pb-6 flex-1">
-          {/* Featured — liderazgo principal */}
-          {featured.length > 0 && (
-            <div className="mb-8 mt-2">
-              <p className="text-xs uppercase tracking-[0.25em] text-gold text-center mb-4">
-                Liderazgo
-              </p>
-              <div className="flex justify-center">
-                <div
-                  className={`grid gap-4 w-full ${featured.length >= 2 ? "grid-cols-2" : "grid-cols-1"} max-w-xs sm:max-w-sm`}
-                >
-                  {featured.map((p) => (
-                    <PersonCard
-                      key={p.id}
-                      person={p}
-                      contextOrg={org.label}
-                      variant="featured"
-                      onClick={() => {
-                        onClose();
-                        onSelectPerson(p);
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
+        {/* Cuerpo con secciones */}
+        <div className="overflow-y-auto px-6 pb-6 pt-4 flex-1">
+          {org.sections.map((section, i) => (
+            <div key={section.heading + i}>
+              {i > 0 && <div className="w-12 h-px bg-border mx-auto my-8" />}
+              {renderSection(section)}
             </div>
-          )}
-
-          {/* Separador */}
-          {featured.length > 0 && primary.length > 0 && (
-            <div className="w-12 h-px bg-gold mx-auto mb-8" />
-          )}
-
-          {/* Primary — directiva */}
-          {primary.length > 0 && (
-            <div className="mb-8">
-              <p className="text-xs uppercase tracking-[0.25em] text-gold text-center mb-4">
-                Directiva
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {primary.map((p) => (
-                  <PersonCard
-                    key={p.id}
-                    person={p}
-                    contextOrg={org.label}
-                    variant="primary"
-                    onClick={() => {
-                      onClose();
-                      onSelectPerson(p);
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Secondary — miembros / maestros */}
-          {secondary.length > 0 && (
-            <div>
-              {(primary.length > 0 || featured.length > 0) && (
-                <div className="w-12 h-px bg-border mx-auto mb-8" />
-              )}
-
-              {groupedSecondary ? (
-                Object.entries(groupedSecondary).map(([group, people]) => (
-                  <div key={group} className="mb-6">
-                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
-                      {org.groupsLabel} · {group}
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {people.map((p) => (
-                        <PersonCard
-                          key={p.id}
-                          person={p}
-                          contextOrg={org.label}
-                          variant="secondary"
-                          onClick={() => {
-                            onClose();
-                            onSelectPerson(p);
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <>
-                  <p className="text-xs uppercase tracking-[0.25em] text-gold text-center mb-4">
-                    Miembros
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {secondary.map((p) => (
-                      <PersonCard
-                        key={p.id}
-                        person={p}
-                        contextOrg={org.label}
-                        variant="secondary"
-                        onClick={() => {
-                          onClose();
-                          onSelectPerson(p);
-                        }}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { Ministry, Person } from "@/data/church";
 import { getDisplayName, getDisplayPosition } from "@/data/church";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 import { MinistryIcon } from "./section-icons";
 
 type Props = {
@@ -8,24 +9,21 @@ type Props = {
   members: Person[];
   onClose: () => void;
   onSelectPerson: (p: Person) => void;
+  // false cuando hay un perfil abierto encima: desactiva su tecla Escape.
+  active?: boolean;
 };
 
-export function MinistryModal({ ministry, members, onClose, onSelectPerson }: Props) {
+export function MinistryModal({ ministry, members, onClose, onSelectPerson, active = true }: Props) {
   useEffect(() => {
-    if (!ministry) return;
+    if (!ministry || !active) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [ministry, onClose]);
+  }, [ministry, active, onClose]);
 
-  useEffect(() => {
-    document.body.style.overflow = ministry ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [ministry]);
+  useBodyScrollLock(!!ministry);
 
   if (!ministry) return null;
 
@@ -99,10 +97,7 @@ export function MinistryModal({ ministry, members, onClose, onSelectPerson }: Pr
                     <li key={person.id}>
                       <button
                         type="button"
-                        onClick={() => {
-                          onClose();
-                          onSelectPerson(person);
-                        }}
+                        onClick={() => onSelectPerson(person)}
                         className="w-full flex items-center gap-4 py-2.5 px-3 rounded-xl hover:bg-secondary transition text-left border border-transparent hover:border-border"
                       >
                         <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-secondary border border-border flex items-center justify-center">

@@ -33,7 +33,7 @@ Cada parte del proyecto tiene una única responsabilidad clara:
 | **Componentes de sitio** | Cómo se presenta cada sección | `src/components/site/` |
 | **Componentes UI** | Bloques visuales reutilizables de bajo nivel | `src/components/ui/` (shadcn) |
 | **Estilos / tokens** | Colores, tipografías y radios | `src/styles.css` |
-| **Lógica de presentación** | Animaciones, conteos, intersección | `src/hooks/` |
+| **Lógica de presentación** | Animaciones, conteos, intersección, navegación de modales con historial | `src/hooks/` |
 
 Un cambio de contenido toca solo la capa de datos; un cambio visual toca solo componentes o estilos. Las capas no se mezclan.
 
@@ -72,7 +72,7 @@ El modelo crece sin reescrituras:
 - **Nuevas personas** → añadir objetos a `PEOPLE`.
 - **Nuevos ministerios / organizaciones** → añadir a `MINISTRIES` / `ORGS`.
 - **Nuevos eventos** → añadir a `EVENTS`; el sitio los clasifica solo en "próximos" o "pasados" según la fecha.
-- **Nuevas fotos** → añadir rutas a `GALLERY_PHOTOS`.
+- **Nuevas fotos** → dejarlas en `public/gallery/` y añadir la ruta `/gallery/...` a `GALLERY_PHOTOS`.
 
 Si en el futuro hubiera mucho contenido o muchas imágenes, el diseño permite migrar los datos a un CMS o las fotos a almacenamiento externo (ver [IMAGES-GUIDE.md](IMAGES-GUIDE.md)) sin rediseñar los componentes.
 

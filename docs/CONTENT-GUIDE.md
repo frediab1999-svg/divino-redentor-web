@@ -38,18 +38,24 @@ El texto de bienvenida del **Hero** es la única excepción: está en `src/route
 
 ## Historia
 
-Sección `HISTORY_BLOCKS`. Son tres bloques (Inicios, Crecimiento, Hoy). Edita el `title` y el `text`:
+Sección `HISTORY_BLOCKS`. Son tres bloques (Inicios, Crecimiento, Hoy). Cada bloque tiene un `title` y un arreglo `content` con párrafos y, opcionalmente, testimonios destacados:
 
 ```ts
 {
   id: "inicios",
   era: "Inicios",
   title: "Las primeras reuniones",
-  text: "Aquí va la descripción de los inicios de la iglesia...",
+  content: [
+    { type: "p", text: "Primer párrafo de la historia..." },
+    { type: "p", text: "Segundo párrafo..." },
+    { type: "quote", text: "La iglesia fue floreciendo.", author: "Hno. Luciano Uitzil" },
+  ],
   images: [],
 }
 ```
 
+- `type: "p"` → párrafo normal. `type: "quote"` → testimonio resaltado (requiere `author`).
+- Para agregar un párrafo o una cita, añade otro objeto al arreglo `content`, en el orden en que debe aparecer.
 - `id` y `era` no se tocan (controlan el timeline).
 - `images` se deja `[]` por ahora; ver [IMAGES-GUIDE.md](IMAGES-GUIDE.md) para agregar fotos.
 
@@ -61,14 +67,16 @@ Objeto `CHURCH_STATS`. Son números:
 
 ```ts
 export const CHURCH_STATS = {
-  totalMembers: 120,
-  foundingYear: 1985,
+  totalMembers: 150,
+  foundingYear: 1973, // "Años de historia" = año actual − foundingYear
   organizations: 5,
   ministries: 7,
 };
 ```
 
 Cambia solo los valores numéricos. Si agregas o quitas organizaciones/ministerios reales, actualiza también estos contadores para que coincidan.
+
+> El contador **"Años de historia"** no es un número fijo: se calcula como `año actual − foundingYear`. Con `foundingYear: 1973` muestra 53 en 2026 y crece solo cada año.
 
 ---
 
@@ -112,8 +120,8 @@ Cada persona se ve así:
 
 ```ts
 {
-  id: "anciano-secretario",
-  name: "Hno. Anciano 1",
+  id: "juan-daniel-mex-may",
+  name: "Juan Daniel Mex May",
   ecclesiasticalRole: "Anciano",
   roles: [{ organization: "Consistorio", position: "Secretario" }],
 }
@@ -131,8 +139,8 @@ Una persona puede pertenecer a **varias** organizaciones agregando más objetos 
 
 ```ts
 roles: [
-  { organization: "Ministerio de Música", position: "Ministro de Música" },
-  { organization: "Coro de la Iglesia", position: "Director" },
+  { organization: "Ministerio de Música", position: "Ministra de Música" },
+  { organization: "Coro de la Iglesia", position: "Directora" },
 ],
 ```
 
@@ -140,14 +148,14 @@ roles: [
 
 ### Privacidad de personas (muy importante)
 
-El campo `visibility` controla qué se muestra:
+El campo `visibility` controla qué se muestra. Ejemplo (hipotético) de una persona que pide reserva de su nombre:
 
 ```ts
 {
-  id: "efc-tesorera",
-  name: "Hna. Tesorera EFC",
+  id: "ejemplo-privado",
+  name: "Nombre real de la persona",
   ecclesiasticalRole: "Miembro",
-  roles: [{ organization: "Escuela de Formación Cristiana", position: "Administración" }],
+  roles: [{ organization: "Sociedad Femenil", position: "Tesorera" }],
   visibility: "role-only",
   publicPosition: "Administración",
 }
@@ -162,16 +170,49 @@ El campo `visibility` controla qué se muestra:
 - `publicPosition` muestra un cargo alternativo (ej. "Administración" en vez de "Tesorera") sin cambiar el dato real.
 - **No elimines a una persona** para ocultarla: usa `visibility: "hidden"`. Así no se pierde el dato y la privacidad queda controlada.
 
-### Ordenar y destacar cargos
+> Nota: actualmente todas las personas están como `"full"` (nombres visibles), porque la iglesia proporcionó y autorizó esos nombres. El mecanismo `role-only` / `hidden` sigue disponible para quien lo solicite.
 
-El orden y el tamaño de las tarjetas se controla en `ORGS`, no en la persona:
+### Estructura de cada organización (secciones)
 
-- `positionOrder` — orden en que aparecen los cargos.
-- `featuredPositions` — tarjeta grande (liderazgo máximo).
-- `primaryPositions` — tarjeta mediana (directiva).
-- El resto → tarjeta compacta.
+El orden, los encabezados y el tamaño de las tarjetas se controlan en `ORGS`, no en la persona. Cada organización define un arreglo `sections`; cada sección tiene su propio `heading` (encabezado visible) y su forma de listar personas:
 
-Normalmente no necesitas tocar esto: basta con dar a la persona un `position` que ya exista en `positionOrder`.
+```ts
+{
+  id: "femenil",
+  label: "Sociedad Femenil",
+  description: "...",
+  bibleRefs: "...",           // opcional: base bíblica bajo la descripción
+  countLabel: "10 diáconos",  // opcional: reemplaza el conteo de la tarjeta
+  positionOrder: ["Presidenta", "Vicepresidenta", "..."],
+  sections: [
+    {
+      heading: "Directiva",
+      layout: "people",
+      heroPositions: ["Presidenta"], // tarjeta grande (líder)
+      positions: ["Presidenta", "Vicepresidenta", "Secretaria", "Subsecretaria", "Tesorera"],
+    },
+    {
+      heading: "Ministerios",
+      layout: "people",
+      positions: ["Educación", "Evangelismo", "Relaciones", "Recursos"],
+      compact: true,                 // tarjetas compactas
+    },
+    { heading: "Consejero", layout: "people", positions: ["Consejero"] },
+  ],
+}
+```
+
+| Campo de la sección | Qué hace |
+|---|---|
+| `heading` | Encabezado visible (ej. "Directiva", "Ancianos", "Ministerios", "Campos", "Maestros"). |
+| `layout` | `"people"` (personas por cargo), `"grouped"` (agrupadas por `group`, como los maestros de la EFC) o `"campos"` (campos con su encargado). |
+| `heroPositions` | Cargos que se muestran como tarjeta grande (líder). |
+| `positions` | Cargos incluidos en la sección, en orden. |
+| `compact` | `true` = tarjetas compactas. |
+| `groupOrder` | En `layout: "grouped"`, orden de los grupos (ej. Preescolar → Adultos). |
+| `campos` | En `layout: "campos"`, lista de `{ name, orgLabel, personId, area? }`. |
+
+Normalmente basta con dar a la persona un `position` que ya exista en las `positions` de alguna sección. Cambiar la estructura de secciones sí requiere cuidado (o pídelo como cambio).
 
 ---
 
@@ -242,12 +283,13 @@ Edita `day`, `time` o `label`. Para agregar un culto, añade un objeto con el mi
 
 ---
 
-## Ubicación y WhatsApp
+## Contacto (WhatsApp, Facebook) y ubicación
 
-Al inicio y cerca del final del archivo:
+Al inicio del archivo:
 
 ```ts
-export const WHATSAPP_URL = "https://wa.me/525555555555";
+export const WHATSAPP_URL = "https://wa.me/5219881053003";
+export const FACEBOOK_URL = "https://www.facebook.com/eldivinoredentorkimbila";
 
 export const LOCATION = {
   name: "Iglesia Nacional Presbiteriana El Divino Redentor",
@@ -256,22 +298,29 @@ export const LOCATION = {
 };
 ```
 
-- **WhatsApp**: el formato es `https://wa.me/` + código de país + número, sin espacios ni signos. (`52` = México). El valor actual `525555555555` es un **placeholder** que debe reemplazarse por el número real.
+- **WhatsApp**: formato `https://wa.me/` + código de país + número, sin espacios ni signos (`52` = México; el `1` después del `52` es el prefijo de celular). Aparece como botón en el Hero, la barra de navegación, Contacto y el pie de página.
+- **Facebook**: URL de la página oficial. Aparece como botón en Contacto y en el pie de página.
 - **Mapa**: pega el enlace corto de Google Maps de la iglesia en `mapsUrl`.
 
 ---
 
 ## Galería
 
-Arreglo `GALLERY_PHOTOS`. Mientras `src` esté vacío (`""`), se muestra un placeholder visual:
+Arreglo `GALLERY_PHOTOS`. Las fotos se guardan en `public/gallery/` y se enlazan con la ruta `/gallery/nombre-archivo`:
 
 ```ts
-{ id: "g1", src: "", alt: "Culto dominical", category: "culto", year: 2024 },
+{
+  id: "g1",
+  src: "/gallery/culto-dominical-2025.jpg",
+  alt: "Congregación reunida en oración durante el culto",
+  category: "culto",
+  year: 2025,
+},
 ```
 
 | Campo | Notas |
 |-------|-------|
-| `src` | Ruta de la imagen. Vacío `""` = placeholder. |
+| `src` | Ruta pública `/gallery/...` (el archivo vive en `public/gallery/`). Vacío `""` = placeholder visual. |
 | `alt` | Descripción de la foto (importante para accesibilidad). |
 | `category` | Una de: `culto`, `celebracion`, `comunidad`, `jovenes`, `ninos`. |
 | `year` | Opcional. |

@@ -45,11 +45,12 @@ Todos los datos de la iglesia viven aquí. Para actualizar cualquier informació
 | `EVENTS` | `ChurchEvent[]` | Eventos con fecha, hora y categoría |
 | `SCHEDULE` | array | Horarios semanales de culto |
 | `LOCATION` | object | Nombre, dirección y link a Google Maps |
-| `GALLERY_PHOTOS` | `GalleryPhoto[]` | Fotos de galería (src vacío = placeholder) |
-| `HISTORY_BLOCKS` | `HistoryBlock[]` | Bloques de historia de la iglesia |
+| `GALLERY_PHOTOS` | `GalleryPhoto[]` | Fotos de galería (archivos en `public/gallery/`, ruta `/gallery/...`; src vacío = placeholder) |
+| `HISTORY_BLOCKS` | `HistoryBlock[]` | Bloques de historia; cada uno con `content: (párrafo \| cita)[]` |
 | `TESTIMONIES` | array | Testimonios de miembros |
 | `CHURCH_STATS` | object | Estadísticas: miembros, año de fundación, etc. |
 | `WHATSAPP_URL` | string | URL de contacto de WhatsApp |
+| `FACEBOOK_URL` | string | URL de la página oficial de Facebook |
 
 ### Modelo `Person` y visibilidad
 
@@ -61,6 +62,16 @@ type PersonVisibility = "full" | "role-only" | "hidden";
 ```
 
 `publicPosition` permite mostrar un cargo alternativo (ej. "Administración" en lugar de "Tesorera") sin cambiar el dato real.
+
+### Modelo `OrgConfig` y secciones
+
+Cada organización en `ORGS` define un arreglo `sections`; cada sección tiene su `heading` (encabezado visible, distinto por organización) y un `layout`:
+
+- `"people"` — personas por cargo (`positions`); `heroPositions` = tarjeta grande; `compact` = tarjeta compacta.
+- `"grouped"` — agrupadas por `group` (maestros de la EFC), con `groupOrder`.
+- `"campos"` — campos/misiones con su encargado (`campos: { name, orgLabel, personId, area? }[]`).
+
+Opcionales de `OrgConfig`: `bibleRefs` (base bíblica bajo la descripción) y `countLabel` (reemplaza el conteo de la tarjeta, ej. Diaconado "10 diáconos"). Detalle en `docs/CONTENT-GUIDE.md`.
 
 ## Componentes del sitio (`src/components/site/`)
 
@@ -85,6 +96,8 @@ type PersonVisibility = "full" | "role-only" | "hidden";
 
 - `use-intersection.ts` — detecta cuando un elemento entra al viewport (IntersectionObserver)
 - `use-count-up.ts` — animación de conteo numérico para `StatsSection`
+- `use-history-modal.ts` — integra los modales con el historial: el botón "Atrás" (o el gesto de retroceso en móvil) cierra el modal superior en vez de salir de la página. Lo usan `LeadershipSection` y `MinistriesSection`.
+- `use-body-scroll-lock.ts` — bloqueo de scroll del `body` con contador compartido, para modales apilados (organización/ministerio + perfil).
 
 ## Estructura de la página (`routes/index.tsx`)
 
@@ -107,7 +120,7 @@ Single-page con secciones en este orden, navegables por anchor:
 - Los componentes `ui/` son de shadcn y no se modifican directamente; extender en `site/`.
 - Estilos con clases Tailwind; tokens personalizados definidos en `styles.css` (ej. `gradient-navy`, `text-gold`).
 - No hay rutas adicionales actualmente; el sitio es una sola página.
-- Las imágenes de galería tienen `src: ""` como placeholder; se agregan rutas reales a `src/assets/gallery/` cuando se tengan fotos.
+- Las fotos de galería viven en `public/gallery/` y se enlazan con la ruta `/gallery/archivo` en `GALLERY_PHOTOS` (no se importan). El logo y el hero sí van en `src/assets/` con `import`.
 
 ## Comandos
 
@@ -124,9 +137,11 @@ npm run format    # Prettier
 - **Nombre oficial**: Iglesia Nacional Presbiteriana El Divino Redentor
 - **Denominación**: Iglesia Nacional Presbiteriana de México A.R.
 - **Ubicación**: Kimbilá, Izamal, Yucatán, México
-- **Fundada**: 1985
-- **Miembros aprox.**: 120
-- **Campos**: Tezón y Citilpech (bajo cuidado de ancianos)
+- **Años de historia**: 53 (se calcula en la web desde `foundingYear: 1973`, origen de la congregación)
+- **Miembros aprox.**: 150
+- **Campos**: San Francisco Tzon y Sitilpech (bajo cuidado de ancianos encargados)
+- **Pastor**: Santiago Chay Perera
+- **Contacto**: WhatsApp +52 1 988 105 3003 · Facebook /eldivinoredentorkimbila
 - **Cultos**: Viernes 6pm (oración), Sábado 6pm (ordinario), Sábado 7:30pm (juvenil), Domingo 10am (EFC), Domingo 7pm (dominical)
 ## Reglas para rediseño UI/UX
 

@@ -1,6 +1,6 @@
 import logo from "@/assets/logo-edr.png";
-import { LOCATION, WHATSAPP_URL } from "@/data/church";
-import { MapPinIcon, WhatsAppIcon } from "./section-icons";
+import { LOCATION, WHATSAPP_URL, FACEBOOK_URL } from "@/data/church";
+import { MapPinIcon, WhatsAppIcon, FacebookIcon } from "./section-icons";
 
 const FOOTER_LINKS: [string, string][] = [
   ["#historia", "Historia"],
@@ -61,15 +61,26 @@ export function SiteFooter() {
               </span>
               <span>{LOCATION.address}</span>
             </a>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 rounded-md border border-primary-foreground/25 px-4 py-2 text-sm hover:border-gold hover:text-gold transition-colors"
-            >
-              <WhatsAppIcon className="h-4 w-4" />
-              WhatsApp
-            </a>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/25 px-4 py-2 text-sm hover:border-gold hover:text-gold transition-colors"
+              >
+                <WhatsAppIcon className="h-4 w-4" />
+                WhatsApp
+              </a>
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/25 px-4 py-2 text-sm hover:border-gold hover:text-gold transition-colors"
+              >
+                <FacebookIcon className="h-4 w-4" />
+                Facebook
+              </a>
+            </div>
           </div>
         </div>
 

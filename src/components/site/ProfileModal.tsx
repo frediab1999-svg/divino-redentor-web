@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { Person } from "@/data/church";
 import { getDisplayName, getDisplayPosition } from "@/data/church";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 type Props = {
   person: Person | null;
@@ -17,12 +18,7 @@ export function ProfileModal({ person, onClose }: Props) {
     return () => document.removeEventListener("keydown", handler);
   }, [person, onClose]);
 
-  useEffect(() => {
-    document.body.style.overflow = person ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [person]);
+  useBodyScrollLock(!!person);
 
   if (!person) return null;
 
