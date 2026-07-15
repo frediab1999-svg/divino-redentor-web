@@ -49,7 +49,7 @@ export function MinistriesSection() {
             {MINISTRIES.map((m, i) => {
               const members = getPeopleByOrg(m.orgKey);
               return (
-                <AnimatedSection key={m.id} delay={i * 60} className="h-full">
+                <AnimatedSection key={m.id} delay={i * 60} className="h-full min-w-0">
                   <button
                     type="button"
                     onClick={() => openMinistry(m)}
@@ -60,7 +60,7 @@ export function MinistriesSection() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline justify-between gap-3">
-                        <h3 className="font-display text-base text-primary leading-tight">
+                        <h3 className="min-w-0 font-display text-base text-primary leading-tight">
                           {m.name}
                         </h3>
                         <span className="shrink-0 text-xs text-muted-foreground">

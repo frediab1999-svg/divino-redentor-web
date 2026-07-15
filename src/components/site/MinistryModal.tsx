@@ -36,9 +36,9 @@ export function MinistryModal({ ministry, members, onClose, onSelectPerson, acti
     >
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative z-10 bg-card border border-border rounded-xl shadow-lg w-full max-w-lg animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative z-10 bg-card border border-border rounded-xl shadow-lg w-full max-w-lg max-h-[90dvh] flex flex-col animate-in zoom-in-95 fade-in duration-200">
         {/* Header */}
-        <div className="px-8 pt-8 pb-5 border-b border-border">
+        <div className="px-8 pt-8 pb-5 border-b border-border shrink-0">
           <button
             type="button"
             onClick={onClose}
@@ -75,7 +75,7 @@ export function MinistryModal({ ministry, members, onClose, onSelectPerson, acti
         </div>
 
         {/* Members */}
-        <div className="px-8 py-6 max-h-[55vh] overflow-y-auto">
+        <div className="px-8 py-6 flex-1 min-h-0 overflow-y-auto">
           {members.length > 0 ? (
             <>
               <p className="text-xs uppercase tracking-[0.2em] text-gold mb-4">

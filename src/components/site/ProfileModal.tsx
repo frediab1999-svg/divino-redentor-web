@@ -43,7 +43,7 @@ export function ProfileModal({ person, onClose }: Props) {
     >
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative z-10 bg-card border border-border rounded-xl shadow-lg w-full max-w-sm animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative z-10 bg-card border border-border rounded-xl shadow-lg w-full max-w-sm max-h-[90dvh] flex flex-col animate-in zoom-in-95 fade-in duration-200">
         {/* Close */}
         <button
           type="button"
@@ -64,7 +64,7 @@ export function ProfileModal({ person, onClose }: Props) {
         </button>
 
         {/* Photo + name */}
-        <div className="px-8 pt-8 pb-5 text-center border-b border-border">
+        <div className="px-8 pt-8 pb-5 text-center border-b border-border shrink-0">
           <div className="mx-auto mb-4 h-24 w-24 rounded-full overflow-hidden bg-secondary ring-1 ring-border flex items-center justify-center">
             {person.photo ? (
               <img src={person.photo} alt={displayName} className="h-full w-full object-cover" />
@@ -84,7 +84,7 @@ export function ProfileModal({ person, onClose }: Props) {
         </div>
 
         {/* All roles */}
-        <div className="px-8 py-6 max-h-[50vh] overflow-y-auto">
+        <div className="px-8 py-6 flex-1 min-h-0 overflow-y-auto">
           {person.roles.length > 0 && (
             <>
               <p className="text-xs uppercase tracking-[0.2em] text-gold mb-4">

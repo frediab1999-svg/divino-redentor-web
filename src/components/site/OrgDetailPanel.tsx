@@ -200,7 +200,7 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
     >
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative z-10 bg-card border border-border rounded-t-2xl sm:rounded-xl shadow-lg w-full sm:max-w-3xl max-h-[90vh] flex flex-col animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300 sm:mx-4">
+      <div className="relative z-10 bg-card border border-border rounded-t-2xl sm:rounded-xl shadow-lg w-full sm:max-w-3xl max-h-[90dvh] flex flex-col animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300 sm:mx-4">
         {/* Header */}
         <div className="flex items-center gap-4 px-6 pt-6 pb-4 border-b border-border shrink-0">
           <div className="h-12 w-12 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-display text-base tracking-wide">
@@ -247,7 +247,7 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
         </div>
 
         {/* Cuerpo con secciones */}
-        <div className="overflow-y-auto px-6 pb-6 pt-4 flex-1">
+        <div className="overflow-y-auto px-6 pb-6 pt-4 flex-1 min-h-0">
           {org.sections.map((section, i) => (
             <div key={section.heading + i}>
               {i > 0 && <div className="w-12 h-px bg-border mx-auto my-8" />}

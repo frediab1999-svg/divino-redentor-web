@@ -30,7 +30,7 @@ function OrgCard({
   const leaderPos = leader ? getDisplayPosition(leader, org.label) : "";
 
   return (
-    <AnimatedSection delay={delay} className="h-full">
+    <AnimatedSection delay={delay} className="h-full min-w-0">
       <button
         type="button"
         onClick={onClick}
@@ -53,9 +53,9 @@ function OrgCard({
               Cuerpo de gobierno
             </p>
           )}
-          <div className="flex items-baseline justify-between gap-3">
+          <div className="flex flex-col gap-y-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-x-3">
             <h3
-              className={`font-display text-primary leading-tight ${featured ? "text-xl sm:text-2xl" : "text-lg"}`}
+              className={`min-w-0 font-display text-primary leading-tight ${featured ? "text-xl sm:text-2xl" : "text-lg"}`}
             >
               {org.label}
             </h3>
@@ -78,7 +78,7 @@ function OrgCard({
             ) : (
               <span />
             )}
-            <span className="shrink-0 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="hidden sm:inline-block shrink-0 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity">
               Ver integrantes →
             </span>
           </div>
