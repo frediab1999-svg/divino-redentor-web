@@ -180,7 +180,7 @@ const GUARDATEMPLO = "Guardatemplo";
 
 const HORARIO_EFC = "Domingos 10:00 AM";
 const HORARIO_SAB = "Sábados 6:00 PM";
-const HORARIO_DOM = "Domingos 7:00 PM";
+const HORARIO_DOM = "Domingos 6:00 PM";
 
 // ─── REGISTRO DE PERSONAS ─────────────────────────────────────────────────────
 export const PEOPLE: Person[] = [
@@ -825,7 +825,7 @@ export const MINISTRIES: Ministry[] = [
   {
     id: "alabanza-domingos",
     name: "Ministerio de Alabanza — Domingos",
-    desc: "Hermanos que sirven al Señor con música y canto en el culto dominical de los domingos a las 7:00 PM.",
+    desc: "Hermanos que sirven al Señor con música y canto en el culto dominical de los domingos a las 6:00 PM.",
     icon: "🎶",
     orgKey: ALABANZA_DOM,
   },
@@ -858,7 +858,7 @@ export const SCHEDULE = [
   { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario" },
   { day: "Sábado", time: "7:30 PM", label: "Reunión Juvenil" },
   { day: "Domingo", time: "10:00 AM", label: "Escuela de Formación Cristiana" },
-  { day: "Domingo", time: "7:00 PM", label: "Culto Dominical" },
+  { day: "Domingo", time: "6:00 PM", label: "Culto Dominical" },
 ];
 
 export const LOCATION = {

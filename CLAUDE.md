@@ -142,7 +142,7 @@ npm run format    # Prettier
 - **Campos**: San Francisco Tzon y Sitilpech (bajo cuidado de ancianos encargados)
 - **Pastor**: Santiago Chay Perera
 - **Contacto**: WhatsApp +52 1 988 105 3003 · Facebook /eldivinoredentorkimbila
-- **Cultos**: Viernes 6pm (oración), Sábado 6pm (ordinario), Sábado 7:30pm (juvenil), Domingo 10am (EFC), Domingo 7pm (dominical)
+- **Cultos**: Viernes 6pm (oración), Sábado 6pm (ordinario), Sábado 7:30pm (juvenil), Domingo 10am (EFC), Domingo 6pm (dominical)
 ## Reglas para rediseño UI/UX
 
 Cuando se pidan cambios visuales o de experiencia de usuario:
