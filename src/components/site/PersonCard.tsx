@@ -11,6 +11,9 @@ type Props = {
   // Si se define, se muestra esta abreviatura del rol (dorado) e inlínea el cargo,
   // en vez del rol eclesiástico completo (ej. "A.I." para ancianos).
   roleAbbrev?: string;
+  // Cargo explícito a mostrar. Necesario cuando una persona tiene varios cargos en
+  // la misma organización (ej. Tesorero y Mayordomía en el Diaconado).
+  positionOverride?: string;
 };
 
 export function PersonCard({
@@ -19,14 +22,17 @@ export function PersonCard({
   onClick,
   variant = "primary",
   roleAbbrev,
+  positionOverride,
 }: Props) {
   const displayName = getDisplayName(person);
-  const displayPos = getDisplayPosition(person, contextOrg);
+  // publicPosition (privacidad) tiene prioridad; si no, el cargo explícito de la sección.
+  const displayPos = person.publicPosition ?? positionOverride ?? getDisplayPosition(person, contextOrg);
   const role: PersonRole | undefined = person.roles.find((r) => r.organization === contextOrg);
   // Evita repetir el cargo cuando coincide con el rol eclesiástico (ej. Pastor / Pastor).
   const posLabel = displayPos && displayPos !== person.ecclesiasticalRole ? displayPos : undefined;
   const subtitle = [posLabel, role?.group].filter(Boolean).join(" · ");
-  const hasMultipleRoles = person.roles.length > 1;
+  // Punto dorado = participa en más de UNA organización (no dos cargos del mismo grupo).
+  const hasMultipleRoles = new Set(person.roles.map((r) => r.organization)).size > 1;
   const isAnonymous = person.visibility === "role-only";
 
   const initials = isAnonymous

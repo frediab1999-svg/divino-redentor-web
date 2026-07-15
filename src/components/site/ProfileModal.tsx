@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { Person } from "@/data/church";
-import { getDisplayName, getDisplayPosition } from "@/data/church";
+import { getDisplayName } from "@/data/church";
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 type Props = {
@@ -92,7 +92,9 @@ export function ProfileModal({ person, onClose }: Props) {
               </p>
               <ul className="space-y-3">
                 {person.roles.map((role, i) => {
-                  const displayPos = getDisplayPosition(person, role.organization);
+                  // Cargo de ESTA fila (no getDisplayPosition, que devuelve el primer
+                  // cargo de la organización y duplicaría cuando hay dos en la misma).
+                  const displayPos = person.publicPosition ?? role.position;
                   return (
                     <li key={i} className="border border-border rounded-md p-4">
                       <p className="font-display text-sm text-primary">{role.organization}</p>

@@ -38,22 +38,34 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
   // ── Renderizado de cada tipo de sección ──────────────────────────────────
   function renderPeople(section: OrgSection) {
     const positions = section.positions ?? [];
-    const inSection = allPeople.filter((p) => {
-      const pos = getRoleInOrg(p, org!.label)?.position ?? "";
-      return positions.some((sp) => pos.startsWith(sp));
-    });
-
-    const isHero = (p: Person) => {
-      const pos = getRoleInOrg(p, org!.label)?.position ?? "";
-      return (section.heroPositions ?? []).some((hp) => pos.startsWith(hp));
+    const heroPositions = section.heroPositions ?? [];
+    const posRank = (pos: string) => {
+      const i = positions.findIndex((sp) => pos.startsWith(sp));
+      return i === -1 ? 999 : i;
     };
-    const heroes = inSection.filter(isHero);
-    const others = inSection.filter((p) => !isHero(p));
+
+    // Una entrada por (persona, cargo) que caiga en esta sección. Así una persona
+    // con dos cargos en la misma organización aparece en ambas secciones con el
+    // cargo correcto (ej. Tesorero en Directiva y Mayordomía en Áreas).
+    type Entry = { person: Person; position: string };
+    const entries: Entry[] = [];
+    for (const p of allPeople) {
+      for (const r of p.roles) {
+        if (r.organization !== org!.label) continue;
+        const pos = r.position ?? "";
+        if (positions.some((sp) => pos.startsWith(sp))) entries.push({ person: p, position: pos });
+      }
+    }
+    entries.sort((a, b) => posRank(a.position) - posRank(b.position));
+
+    const isHero = (pos: string) => heroPositions.some((hp) => pos.startsWith(hp));
+    const heroes = entries.filter((e) => isHero(e.position));
+    const others = entries.filter((e) => !isHero(e.position));
 
     return (
       <>
         <SectionHeading>{section.heading}</SectionHeading>
-        {inSection.length === 0 ? (
+        {entries.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center italic py-2">
             Información por definir.
           </p>
@@ -64,14 +76,15 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
                 <div
                   className={`grid gap-4 w-full ${heroes.length >= 2 ? "grid-cols-2" : "grid-cols-1"} max-w-xs sm:max-w-sm`}
                 >
-                  {heroes.map((p) => (
+                  {heroes.map((e) => (
                     <PersonCard
-                      key={p.id}
-                      person={p}
+                      key={`${e.person.id}-${e.position}`}
+                      person={e.person}
                       contextOrg={org!.label}
                       variant="featured"
                       roleAbbrev={section.roleAbbrev}
-                      onClick={() => select(p)}
+                      positionOverride={e.position}
+                      onClick={() => select(e.person)}
                     />
                   ))}
                 </div>
@@ -80,26 +93,28 @@ export function OrgDetailPanel({ org, onClose, onSelectPerson, active = true }: 
             {others.length > 0 &&
               (section.compact ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {others.map((p) => (
+                  {others.map((e) => (
                     <PersonCard
-                      key={p.id}
-                      person={p}
+                      key={`${e.person.id}-${e.position}`}
+                      person={e.person}
                       contextOrg={org!.label}
                       variant="secondary"
-                      onClick={() => select(p)}
+                      positionOverride={e.position}
+                      onClick={() => select(e.person)}
                     />
                   ))}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {others.map((p) => (
+                  {others.map((e) => (
                     <PersonCard
-                      key={p.id}
-                      person={p}
+                      key={`${e.person.id}-${e.position}`}
+                      person={e.person}
                       contextOrg={org!.label}
                       variant="primary"
                       roleAbbrev={section.roleAbbrev}
-                      onClick={() => select(p)}
+                      positionOverride={e.position}
+                      onClick={() => select(e.person)}
                     />
                   ))}
                 </div>

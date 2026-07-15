@@ -234,13 +234,46 @@ export const PEOPLE: Person[] = [
     roles: [
       { organization: CONSISTORIO, position: "Ministro de Evangelismo" },
       { organization: CAMPO_TZON, position: "Anciano Encargado" },
+      { organization: EFC, position: "Maestro", group: "Adultos", schedule: HORARIO_EFC },
     ],
   },
   {
     id: "alan-darwin-uitzil-may",
     name: "Alan Darwin Uitzil May",
     ecclesiasticalRole: "Anciano",
-    roles: [{ organization: CONSISTORIO, position: "Ministro de Recursos" }],
+    roles: [
+      { organization: CONSISTORIO, position: "Ministro de Recursos" },
+      { organization: DIACONADO, position: "Consejero" },
+    ],
+  },
+
+  // ── DIACONADO ──────────────────────────────────────────────────────────────
+  {
+    id: "israel-uitzil-canche",
+    name: "Israel Uitzil Canche",
+    ecclesiasticalRole: "Diácono",
+    roles: [{ organization: DIACONADO, position: "Presidente" }],
+  },
+  {
+    id: "jorge-abizai-may-may",
+    name: "Jorge Abizai May May",
+    ecclesiasticalRole: "Diácono",
+    roles: [
+      { organization: DIACONADO, position: "Vicepresidente" },
+      { organization: DIACONADO, position: "Construcción" },
+    ],
+  },
+  {
+    id: "cinthia-lizeth-uitzil-may",
+    name: "Cinthia Lizeth Uitzil May",
+    ecclesiasticalRole: "Diaconisa",
+    roles: [{ organization: DIACONADO, position: "Beneficencia" }],
+  },
+  {
+    id: "abdi-israel-ruiz-can",
+    name: "Abdi Israel Ruiz Can",
+    ecclesiasticalRole: "Diácono",
+    roles: [{ organization: DIACONADO, position: "Insumos" }],
   },
 
   // ── ESCUELA DE FORMACIÓN CRISTIANA — DIRECTIVA ─────────────────────────────
@@ -296,10 +329,13 @@ export const PEOPLE: Person[] = [
     roles: [{ organization: EFC, position: "Maestra", group: "Preescolar", schedule: HORARIO_EFC }],
   },
   {
-    id: "lili-uitzil",
-    name: "Lili Uitzil",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestra", group: "Preescolar", schedule: HORARIO_EFC }],
+    id: "lili-margarita-uitzil-can",
+    name: "Lili Margarita Uitzil Can",
+    ecclesiasticalRole: "Diaconisa",
+    roles: [
+      { organization: DIACONADO, position: "Orden y reverencia" },
+      { organization: EFC, position: "Maestra", group: "Preescolar", schedule: HORARIO_EFC },
+    ],
   },
   // Párvulos
   {
@@ -336,8 +372,8 @@ export const PEOPLE: Person[] = [
     ],
   },
   {
-    id: "jr-freddie-uitzil",
-    name: "Jr. Freddie Uitzil",
+    id: "jr-freddie-uitzil-pat",
+    name: "Jr. Freddie Uitzil Pat",
     ecclesiasticalRole: "Miembro",
     roles: [
       { organization: EFC, position: "Maestro", group: "Principiantes", schedule: HORARIO_EFC },
@@ -353,23 +389,33 @@ export const PEOPLE: Person[] = [
     roles: [{ organization: EFC, position: "Maestra", group: "Primarios", schedule: HORARIO_EFC }],
   },
   {
-    id: "nimsi",
-    name: "Nimsi",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestra", group: "Primarios", schedule: HORARIO_EFC }],
+    id: "nimci-yolanda-can-llanos",
+    name: "Nimci Yolanda Can Llanos",
+    ecclesiasticalRole: "Diaconisa",
+    roles: [
+      { organization: DIACONADO, position: "Beneficencia" },
+      { organization: EFC, position: "Maestra", group: "Primarios", schedule: HORARIO_EFC },
+    ],
   },
   // Intermedios
   {
-    id: "keyla-may",
-    name: "Keyla May",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestra", group: "Intermedios", schedule: HORARIO_EFC }],
+    id: "keyla-merari-may-medina",
+    name: "Keyla Merari May Medina",
+    ecclesiasticalRole: "Diaconisa",
+    roles: [
+      { organization: DIACONADO, position: "Orden y reverencia" },
+      { organization: EFC, position: "Maestra", group: "Intermedios", schedule: HORARIO_EFC },
+    ],
   },
   {
-    id: "alonso-chuc-pat",
-    name: "Alonso Chuc Pat",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestro", group: "Intermedios", schedule: HORARIO_EFC }],
+    id: "jose-alonso-chuc-ortiz",
+    name: "José Alonso Chuc Ortiz",
+    ecclesiasticalRole: "Diácono",
+    roles: [
+      { organization: DIACONADO, position: "Tesorero" },
+      { organization: DIACONADO, position: "Mayordomía" },
+      { organization: EFC, position: "Maestro", group: "Intermedios", schedule: HORARIO_EFC },
+    ],
   },
   {
     id: "gladis-pat-may",
@@ -385,18 +431,14 @@ export const PEOPLE: Person[] = [
     roles: [{ organization: EFC, position: "Maestro", group: "Adultos", schedule: HORARIO_EFC }],
   },
   {
-    id: "adriano",
-    name: "Adriano",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestro", group: "Adultos", schedule: HORARIO_EFC }],
+    id: "adriano-canche-may",
+    name: "Adriano Canche May",
+    ecclesiasticalRole: "Diácono",
+    roles: [
+      { organization: DIACONADO, position: "Secretario" },
+      { organization: EFC, position: "Maestro", group: "Adultos", schedule: HORARIO_EFC },
+    ],
   },
-  {
-    id: "freddie-uitzil",
-    name: "Freddie Uitzil",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestro", group: "Adultos", schedule: HORARIO_EFC }],
-  },
-
   // ── SOCIEDAD FEMENIL ────────────────────────────────────────────────────────
   {
     id: "luci-aremi-uitzil-uitz",
@@ -535,10 +577,13 @@ export const PEOPLE: Person[] = [
     roles: [{ organization: AUDIO, position: "Integrante" }],
   },
   {
-    id: "felipe-canche-llanos",
-    name: "Felipe Canché Llanos",
-    ecclesiasticalRole: "Miembro",
-    roles: [{ organization: ALABANZA_DOM, position: "Integrante", schedule: HORARIO_DOM }],
+    id: "luis-felipe-canche-llanos",
+    name: "Luis Felipe Canché Llanos",
+    ecclesiasticalRole: "Diácono",
+    roles: [
+      { organization: DIACONADO, position: "Apoyo" },
+      { organization: ALABANZA_DOM, position: "Integrante", schedule: HORARIO_DOM },
+    ],
   },
   {
     id: "esteher-pat",
@@ -680,13 +725,37 @@ export const ORGS: OrgConfig[] = [
     icon: "🤝",
     logoLabel: "D",
     countLabel: "10 diáconos",
-    positionOrder: ["Presidente", "Secretario"],
+    positionOrder: [
+      "Presidente",
+      "Vicepresidente",
+      "Secretario",
+      "Tesorero",
+      "Consejero",
+      "Beneficencia",
+      "Mayordomía",
+      "Orden y reverencia",
+      "Insumos",
+      "Construcción",
+      "Apoyo",
+    ],
     sections: [
       {
         heading: "Directiva",
         layout: "people",
-        heroPositions: ["Presidente", "Secretario"],
-        positions: ["Presidente", "Secretario"],
+        heroPositions: ["Presidente"],
+        positions: ["Presidente", "Vicepresidente", "Secretario", "Tesorero", "Consejero"],
+      },
+      {
+        heading: "Áreas de servicio",
+        layout: "people",
+        positions: [
+          "Beneficencia",
+          "Mayordomía",
+          "Orden y reverencia",
+          "Insumos",
+          "Construcción",
+          "Apoyo",
+        ],
       },
     ],
   },
