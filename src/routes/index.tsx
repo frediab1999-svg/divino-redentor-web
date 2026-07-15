@@ -26,7 +26,7 @@ function Home() {
       <Navbar />
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section id="inicio" className="relative overflow-hidden bg-background pt-36 pb-16">
+      <section id="inicio" className="relative overflow-hidden bg-background pt-28 sm:pt-36 pb-16">
         {/* Imagen de fondo — cruz (identidad visual) */}
         <img
           src={heroCross}
@@ -44,12 +44,12 @@ function Home() {
             <img
               src={logo}
               alt="Logo Iglesia El Divino Redentor"
-              className="mx-auto h-28 w-28 md:h-32 md:w-32 rounded-full bg-white p-2 ring-1 ring-border"
+              className="mx-auto h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full bg-white p-2 ring-1 ring-border"
             />
-            <p className="mt-7 text-xs md:text-sm uppercase tracking-[0.3em] text-gold">
+            <p className="mt-6 text-[11px] md:text-sm uppercase tracking-[0.18em] sm:tracking-[0.3em] text-gold">
               Iglesia Nacional Presbiteriana de México A.R.
             </p>
-            <h1 className="mt-5 font-display text-primary text-5xl sm:text-6xl md:text-7xl leading-[1.05]">
+            <h1 className="mt-5 font-display text-primary text-[2.6rem] sm:text-6xl md:text-7xl leading-[1.05]">
               El Divino Redentor
             </h1>
             <p className="mt-4 text-muted-foreground text-lg">Kimbilá, Izamal, Yucatán</p>
@@ -62,19 +62,19 @@ function Home() {
               nuestro Salvador.
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-9 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3">
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-primary text-primary-foreground px-7 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors"
               >
                 <WhatsAppIcon className="h-[18px] w-[18px]" />
                 Contactar por WhatsApp
               </a>
               <a
                 href="#historia"
-                className="inline-flex items-center gap-2 border border-primary/30 text-primary px-7 py-3 rounded-md hover:bg-primary/5 transition-colors"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 border border-primary/30 text-primary px-7 py-3 rounded-md hover:bg-primary/5 transition-colors"
               >
                 Conocer nuestra historia
               </a>

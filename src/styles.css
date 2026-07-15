@@ -84,7 +84,13 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  html {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%; /* evita que iOS agrande el texto en horizontal */
+  }
   body {
+    overflow-x: hidden; /* red de seguridad: nada provoca scroll lateral en móvil */
+    max-width: 100%;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);

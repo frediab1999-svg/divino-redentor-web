@@ -84,7 +84,7 @@ function GuideIcon({ name }: { name: GuideItem["key"] }) {
 
 export function NavigationGuide() {
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 mt-16">
+    <div className="max-w-6xl mx-auto px-6 lg:px-10 mt-12 sm:mt-16">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {GUIDE_ITEMS.map((item, i) => (
           <AnimatedSection key={item.href} delay={i * 60}>
