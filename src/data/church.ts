@@ -32,32 +32,28 @@ export const HISTORY_BLOCKS: HistoryBlock[] = [
     content: [
       {
         type: "p",
-        text: "La historia de la Iglesia Presbiteriana Divino Redentor comenzó gracias a la fe, la unidad y el esfuerzo de un grupo de hermanos que anhelaban contar con un lugar donde reunirse para adorar a Dios.",
+        text: "La historia de la Iglesia Presbiteriana Divino Redentor comenzó con la fe y el esfuerzo de un grupo de hermanos que anhelaban tener un lugar donde reunirse para adorar a Dios.",
       },
       {
         type: "p",
-        text: "Entre los primeros creyentes se encontraban Pedro Celestino Itzá, uno de los primeros ancianos de nuestra iglesia; Luciano Uitzil May; Anastacio Can; Emilio May y su familia; don Nicolás May y su familia, así como la familia Uitzil.",
+        text: "Entre los primeros creyentes estuvieron Pedro Celestino Itzá, Luciano Uitzil May, Anastacio Can, Emilio May y su familia, don Nicolás May y su familia, así como la familia Uitzil.",
       },
       {
         type: "p",
-        text: "Con la participación de estas familias se construyó una pequeña casa de oración cerca del lugar donde actualmente se encuentran las instalaciones de nuestra iglesia. El terreno fue donado generosamente por nuestro hermano Francisco Javier Uitzil Canché. Sobre él se levantó una sencilla construcción de madera y tablas, al estilo de bajareque.",
+        text: "Gracias a la participación de estas familias y a la generosa donación de un terreno por parte del hermano Francisco Javier Uitzil Canché, se construyó una pequeña casa de oración de madera y tablas, cerca de donde hoy se encuentran las instalaciones de nuestra iglesia.",
       },
       {
         type: "p",
-        text: "Aunque aquel primer lugar de reunión era humilde, se convirtió en el espacio donde los hermanos celebraban sus devocionales, compartían la Palabra de Dios y fortalecían su fe.",
+        text: "Aunque era un lugar sencillo, allí los hermanos celebraban sus devocionales, compartían la Palabra de Dios y fortalecían su fe. Tiempo después, la congregación adoptó el nombre «El Divino Redentor».",
       },
       {
         type: "p",
-        text: "Al principio, la congregación todavía no tenía un nombre. Después de buscar uno que expresara su identidad y su esperanza en Cristo, los hermanos decidieron llamarla «El Divino Redentor».",
-      },
-      {
-        type: "p",
-        text: "A partir de entonces, comenzaron a visitar a más personas y familias de la comunidad, entre ellas la familia Canché y don Nicanor. Por medio de estas visitas, del testimonio de los creyentes y de la predicación del Evangelio, nuevas personas comenzaron a acercarse.",
+        text: "Los hermanos comenzaron a visitar a más familias de la comunidad y, por medio de la predicación del Evangelio y su testimonio, nuevas personas se acercaron a la iglesia.",
       },
       { type: "quote", text: "La iglesia fue floreciendo.", author: "Hno. Luciano Uitzil" },
       {
         type: "p",
-        text: "Con el paso del tiempo, la congregación creció hasta reunir aproximadamente cincuenta miembros y fue constituida formalmente como iglesia. Su primer consistorio estuvo integrado por los ancianos Luciano Uitzil, Bernabé Pech, Ricardo Can y Pedro Itzá. También sirvieron como diáconos Benjamín Uitzil, Augusto May y don Santos Valentín Pech.",
+        text: "Con el paso del tiempo, la congregación creció hasta alcanzar aproximadamente cincuenta miembros y fue constituida formalmente como iglesia. Su primer consistorio estuvo integrado por Luciano Uitzil, Bernabé Pech, Ricardo Can y Pedro Itzá; y como diáconos sirvieron Benjamín Uitzil, Augusto May y Santos Valentín Pech.",
       },
       {
         type: "quote",
@@ -66,15 +62,11 @@ export const HISTORY_BLOCKS: HistoryBlock[] = [
       },
       {
         type: "p",
-        text: "La iglesia continuó creciendo y desarrollando diferentes grupos, devocionales y actividades durante casi todos los días de la semana. Esto hizo necesario contar con más ancianos, diáconos y servidores que ayudaran en el cuidado de la congregación.",
+        text: "La iglesia continuó creciendo mediante la oración, el servicio, los devocionales y la predicación del Evangelio.",
       },
       {
         type: "p",
-        text: "Los hermanos siguieron visitando a las familias, compartiendo el Evangelio y trabajando unidos. Estas acciones, acompañadas de la oración y del servicio, fueron fundamentales para el crecimiento de la Iglesia Presbiteriana Divino Redentor.",
-      },
-      {
-        type: "p",
-        text: "Así comenzó nuestra historia: en una sencilla casa de oración construida con madera, pero sostenida por una fe firme, por el amor entre los hermanos y por el deseo de anunciar a Cristo como nuestro Salvador.",
+        text: "Así comenzó nuestra historia: en una sencilla casa de oración, sostenida por una fe firme, el amor entre los hermanos y el deseo de anunciar a Cristo como nuestro Salvador.",
       },
     ],
     images: [],
@@ -964,7 +956,7 @@ export const MINISTRY_GROUPS: MinistryGroup[] = [
 
 // ─── HORARIOS ─────────────────────────────────────────────────────────────────
 export const SCHEDULE = [
-  { day: "Viernes", time: "6:00 PM", label: "Noche de Oración" },
+  { day: "Miércoles", time: "7:00 PM", label: "Noche de Oración" },
   { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario" },
   { day: "Sábado", time: "7:30 PM", label: "Reunión Juvenil" },
   { day: "Domingo", time: "10:00 AM", label: "Escuela de Formación Cristiana" },

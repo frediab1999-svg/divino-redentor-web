@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import logo from "@/assets/logo-edr.png";
+import logoInpm from "@/assets/logo-inpm.webp";
 import heroCross from "@/assets/hero/hero-cross.jpg";
 import { Navbar } from "@/components/site/Navbar";
 import { AnimatedSection } from "@/components/site/AnimatedSection";
@@ -42,9 +42,9 @@ function Home() {
         <div className="relative z-10 max-w-3xl mx-auto px-6 lg:px-10 text-center">
           <AnimatedSection>
             <img
-              src={logo}
-              alt="Logo Iglesia El Divino Redentor"
-              className="mx-auto h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full bg-white p-2 ring-1 ring-border"
+              src={logoInpm}
+              alt="Escudo oficial de la Iglesia Nacional Presbiteriana de México, A.R."
+              className="mx-auto h-28 w-28 md:h-32 md:w-32 rounded-full bg-white"
             />
             <p className="mt-6 text-[11px] md:text-sm uppercase tracking-[0.18em] sm:tracking-[0.3em] text-gold">
               Iglesia Nacional Presbiteriana de México A.R.

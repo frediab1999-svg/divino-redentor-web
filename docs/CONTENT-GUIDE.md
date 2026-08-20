@@ -308,7 +308,7 @@ Arreglo `SCHEDULE`. Cada renglón es un culto semanal:
 
 ```ts
 export const SCHEDULE = [
-  { day: "Viernes", time: "6:00 PM", label: "Noche de Oración" },
+  { day: "Miércoles", time: "7:00 PM", label: "Noche de Oración" },
   { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario" },
   // ...
 ];
