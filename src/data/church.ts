@@ -8,7 +8,7 @@ export const CHURCH_STATS = {
   // Origen de la congregación. "Años de historia" se calcula a partir de este año.
   foundingYear: 1973,
   organizations: 5,
-  ministries: 7,
+  ministries: 4,
 };
 
 // ─── HISTORIA ─────────────────────────────────────────────────────────────────
