@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import {
   MINISTRIES,
   MINISTRY_GROUPS,
-  getPeopleByOrg,
+  getMinistryMembersCount,
   type Ministry,
   type Person,
 } from "@/data/church";
@@ -73,7 +73,7 @@ export function MinistriesSection() {
 
                   <div className="grid sm:grid-cols-2 gap-3">
                     {items.map((m, i) => {
-                      const members = getPeopleByOrg(m.orgKey);
+                      const membersCount = getMinistryMembersCount(m);
                       return (
                         <AnimatedSection key={m.id} delay={i * 60} className="h-full min-w-0">
                           <button
@@ -90,14 +90,14 @@ export function MinistriesSection() {
                                   {m.name}
                                 </h3>
                                 <span className="shrink-0 text-xs text-muted-foreground">
-                                  {members.length}
+                                  {membersCount}
                                 </span>
                               </div>
                               <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed line-clamp-2">
                                 {m.desc}
                               </p>
                               <p className="mt-2 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity">
-                                Ver integrantes →
+                                {m.subgroups?.length ? "Ver grupos →" : "Ver integrantes →"}
                               </p>
                             </div>
                           </button>
@@ -115,7 +115,6 @@ export function MinistriesSection() {
       <MinistryModal
         ministry={selectedMinistry}
         active={!selectedPerson}
-        members={selectedMinistry ? getPeopleByOrg(selectedMinistry.orgKey) : []}
         onClose={closeMinistry}
         onSelectPerson={openPerson}
       />

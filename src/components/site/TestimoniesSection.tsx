@@ -14,26 +14,42 @@ export function TestimoniesSection() {
           />
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-3 gap-x-10 gap-y-12">
-          {TESTIMONIES.map((t, i) => (
-            <AnimatedSection key={t.name} delay={i * 80}>
-              <figure className="h-full flex flex-col border-t border-border pt-6">
-                <span
-                  aria-hidden="true"
-                  className="font-display text-5xl leading-none text-gold/70"
-                >
-                  &ldquo;
-                </span>
-                <blockquote className="mt-1 flex-1 font-display text-xl md:text-[1.35rem] leading-snug text-foreground/85">
-                  {t.text}
-                </blockquote>
-                <figcaption className="mt-5 text-sm uppercase tracking-[0.18em] text-primary">
-                  {t.name}
-                </figcaption>
-              </figure>
-            </AnimatedSection>
-          ))}
-        </div>
+        {TESTIMONIES.length === 0 ? (
+          <AnimatedSection>
+            <div className="border-t border-border pt-10 flex flex-col items-center text-center">
+              <span aria-hidden="true" className="font-display text-5xl leading-none text-gold/70">
+                &ldquo;
+              </span>
+              <p className="mt-2 font-display text-2xl md:text-3xl text-primary leading-snug">
+                Próximamente
+              </p>
+              <p className="mt-3 max-w-md text-sm text-muted-foreground leading-relaxed">
+                Pronto compartiremos aquí los testimonios de nuestros hermanos.
+              </p>
+            </div>
+          </AnimatedSection>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-x-10 gap-y-12">
+            {TESTIMONIES.map((t, i) => (
+              <AnimatedSection key={t.name} delay={i * 80}>
+                <figure className="h-full flex flex-col border-t border-border pt-6">
+                  <span
+                    aria-hidden="true"
+                    className="font-display text-5xl leading-none text-gold/70"
+                  >
+                    &ldquo;
+                  </span>
+                  <blockquote className="mt-1 flex-1 font-display text-xl md:text-[1.35rem] leading-snug text-foreground/85">
+                    {t.text}
+                  </blockquote>
+                  <figcaption className="mt-5 text-sm uppercase tracking-[0.18em] text-primary">
+                    {t.name}
+                  </figcaption>
+                </figure>
+              </AnimatedSection>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
