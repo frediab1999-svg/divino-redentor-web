@@ -1,19 +1,26 @@
-import { useEffect } from "react";
-import type { Ministry, Person } from "@/data/church";
-import { getDisplayName, getDisplayPosition } from "@/data/church";
+import { useEffect, useState } from "react";
+import type { Ministry, MinistrySubgroup, Person } from "@/data/church";
+import { getDisplayName, getDisplayPosition, getPeopleByOrg } from "@/data/church";
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 import { MinistryIcon } from "./section-icons";
 
 type Props = {
   ministry: Ministry | null;
-  members: Person[];
   onClose: () => void;
   onSelectPerson: (p: Person) => void;
   // false cuando hay un perfil abierto encima: desactiva su tecla Escape.
   active?: boolean;
 };
 
-export function MinistryModal({ ministry, members, onClose, onSelectPerson, active = true }: Props) {
+export function MinistryModal({ ministry, onClose, onSelectPerson, active = true }: Props) {
+  // Subgrupo elegido dentro de un ministerio con subgrupos (ej. Grupo de Alabanza).
+  const [subgroup, setSubgroup] = useState<MinistrySubgroup | null>(null);
+
+  useEffect(() => {
+    setSubgroup(null);
+    // También se reinicia al cerrar, para reabrir siempre en el selector.
+  }, [ministry]);
+
   useEffect(() => {
     if (!ministry || !active) return;
     const handler = (e: KeyboardEvent) => {
@@ -26,6 +33,15 @@ export function MinistryModal({ ministry, members, onClose, onSelectPerson, acti
   useBodyScrollLock(!!ministry);
 
   if (!ministry) return null;
+
+  const subgroups = ministry.subgroups ?? [];
+  // Mientras no se elija un subgrupo, se muestra el selector.
+  const showPicker = subgroups.length > 0 && !subgroup;
+  const title = subgroup ? subgroup.name : ministry.name;
+  const desc = subgroup ? subgroup.desc : ministry.desc;
+  const iconId = subgroup ? subgroup.id : ministry.id;
+  const orgKey = subgroup ? subgroup.orgKey : ministry.orgKey;
+  const members = showPicker || !orgKey ? [] : getPeopleByOrg(orgKey);
 
   return (
     <div
@@ -57,26 +73,71 @@ export function MinistryModal({ ministry, members, onClose, onSelectPerson, acti
             </svg>
           </button>
 
-          <div className="flex items-center gap-4">
+          {subgroup && (
+            <button
+              type="button"
+              onClick={() => setSubgroup(null)}
+              className="mb-4 inline-flex items-center gap-1.5 text-xs text-gold hover:text-primary transition-colors"
+            >
+              <span aria-hidden="true">←</span> {ministry.name}
+            </button>
+          )}
+
+          <div className="flex items-center gap-4 pr-10">
             <div className="h-12 w-12 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center">
-              <MinistryIcon id={ministry.id} className="h-5 w-5" />
+              <MinistryIcon id={iconId} className="h-5 w-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.2em] text-gold">Ministerio</p>
               <h3
                 id="ministry-modal-title"
-                className="font-display text-xl text-primary leading-tight"
+                className="font-display text-lg sm:text-xl text-primary leading-tight"
               >
-                {ministry.name}
+                {title}
               </h3>
             </div>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{ministry.desc}</p>
+          <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{desc}</p>
         </div>
 
         {/* Members */}
         <div className="px-8 py-6 flex-1 min-h-0 overflow-y-auto">
-          {members.length > 0 ? (
+          {showPicker ? (
+            <>
+              <p className="text-xs uppercase tracking-[0.2em] text-gold mb-4">
+                Selecciona un grupo
+              </p>
+              <ul className="space-y-2">
+                {subgroups.map((sub) => {
+                  const count = getPeopleByOrg(sub.orgKey).length;
+                  return (
+                    <li key={sub.id}>
+                      <button
+                        type="button"
+                        onClick={() => setSubgroup(sub)}
+                        className="group w-full flex items-center gap-4 py-3 px-3 rounded-xl hover:bg-secondary transition text-left border border-border"
+                      >
+                        <span className="h-10 w-10 shrink-0 rounded-lg bg-secondary text-primary group-hover:text-gold flex items-center justify-center transition-colors">
+                          <MinistryIcon id={sub.id} className="h-5 w-5" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-display text-primary text-sm leading-tight">
+                            {sub.name}
+                          </span>
+                          <span className="block text-xs text-muted-foreground mt-0.5">
+                            {count} {count === 1 ? "integrante" : "integrantes"}
+                          </span>
+                        </span>
+                        <span aria-hidden="true" className="shrink-0 text-gold text-sm">
+                          →
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          ) : members.length > 0 ? (
             <>
               <p className="text-xs uppercase tracking-[0.2em] text-gold mb-4">
                 Integrantes · {members.length}
@@ -84,8 +145,8 @@ export function MinistryModal({ ministry, members, onClose, onSelectPerson, acti
               <ul className="space-y-2">
                 {members.map((person) => {
                   const displayName = getDisplayName(person);
-                  const displayPos = getDisplayPosition(person, ministry.orgKey);
-                  const role = person.roles.find((r) => r.organization === ministry.orgKey);
+                  const displayPos = getDisplayPosition(person, orgKey);
+                  const role = person.roles.find((r) => r.organization === orgKey);
                   const initials = displayName
                     .replace(/^(Hno\.|Hna\.)\s*/i, "")
                     .split(" ")

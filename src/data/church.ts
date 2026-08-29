@@ -110,20 +110,10 @@ export const HISTORY_BLOCKS: HistoryBlock[] = [
 ];
 
 // ─── TESTIMONIOS ──────────────────────────────────────────────────────────────
-export const TESTIMONIES = [
-  {
-    name: "Hno. Juan Pérez",
-    text: "Aquí se puede colocar el testimonio del hermano sobre cómo Dios ha obrado en su vida y en su familia dentro de la iglesia.",
-  },
-  {
-    name: "Hna. María López",
-    text: "Espacio para un testimonio personal de fe, gratitud y servicio en la congregación El Divino Redentor.",
-  },
-  {
-    name: "Hno. Pedro Canul",
-    text: "Dios ha sido fiel en cada etapa, y esta iglesia ha sido un hogar espiritual para mi familia durante muchos años.",
-  },
-];
+export type Testimony = { name: string; text: string };
+
+// Sin testimonios publicados por el momento: la sección muestra "Próximamente".
+export const TESTIMONIES: Testimony[] = [];
 
 // ─── MODELO CENTRAL DE PERSONAS ──────────────────────────────────────────────
 //
@@ -162,9 +152,9 @@ const FEMENIL = "Sociedad Femenil";
 const JUVENIL = "Sociedad Juvenil";
 const CAMPO_TZON = "Campo San Francisco Tzon";
 const CAMPO_SITILPECH = "Campo Sitilpech";
-const ALABANZA_SAB = "Ministerio de Alabanza — Sábados";
-const ALABANZA_DOM = "Ministerio de Alabanza — Domingos";
-const AUDIO = "Ministerio de Audio";
+const ALABANZA_SAB = "Grupo de Alabanza — Sábados";
+const ALABANZA_DOM = "Grupo de Alabanza — Domingos";
+const AUDIO = "Equipo de Audio";
 const MUSICA = "Ministerio de Música";
 const CORO = "Coro de la Iglesia";
 const CORO_INFANTIL = "Coro Infantil";
@@ -413,7 +403,9 @@ export const PEOPLE: Person[] = [
     id: "gladis-pat-may",
     name: "Gladis Pat May",
     ecclesiasticalRole: "Miembro",
-    roles: [{ organization: EFC, position: "Maestra", group: "Intermedios", schedule: HORARIO_EFC }],
+    roles: [
+      { organization: EFC, position: "Maestra", group: "Intermedios", schedule: HORARIO_EFC },
+    ],
   },
   // Adultos
   {
@@ -713,7 +705,8 @@ export const ORGS: OrgConfig[] = [
     label: DIACONADO,
     description:
       "Los diáconos sirven a la iglesia promoviendo la mayordomía, administrando fielmente sus recursos y atendiendo a quienes atraviesan necesidades.\n\nTambién cuidan el templo, mantienen el orden, colaboran con pastores y ancianos, y dan ejemplo con su servicio, ofrendas y diezmos.",
-    bibleRefs: "1 Crónicas 29:11-14; 1 Corintios 16:2-3; 2 Corintios 8–9; Gálatas 6:10; Santiago 1:27.",
+    bibleRefs:
+      "1 Crónicas 29:11-14; 1 Corintios 16:2-3; 2 Corintios 8–9; Gálatas 6:10; Santiago 1:27.",
     icon: "🤝",
     logoLabel: "D",
     countLabel: "10 diáconos",
@@ -873,25 +866,50 @@ export function getOrgPeople(org: OrgConfig): Person[] {
 }
 
 // ─── MINISTERIOS ──────────────────────────────────────────────────────────────
+// Un ministerio puede dividirse en subgrupos (ej. Grupo de Alabanza →
+// Sábados / Domingos). En ese caso `orgKey` queda vacío y los integrantes
+// se toman de cada subgrupo.
+export type MinistrySubgroup = {
+  id: string;
+  name: string;
+  desc: string;
+  orgKey: string;
+};
+
 export type Ministry = {
   id: string;
   name: string;
   desc: string;
   icon: string;
   orgKey: string;
+  subgroups?: MinistrySubgroup[];
 };
 
 export const MINISTRIES: Ministry[] = [
   {
-    id: "alabanza-sabados",
-    name: "Ministerio de Alabanza — Sábados",
-    desc: "Hermanos que sirven al Señor con música y canto en el culto ordinario de los sábados a las 6:00 PM.",
+    id: "grupo-alabanza",
+    name: "Grupo de Alabanza",
+    desc: "Hermanos que sirven al Señor con música y canto en los cultos. Se organiza en dos grupos: sábados y domingos.",
     icon: "🎵",
-    orgKey: ALABANZA_SAB,
+    orgKey: "",
+    subgroups: [
+      {
+        id: "alabanza-sabados",
+        name: "Grupo de Alabanza — Sábados",
+        desc: "Hermanos que sirven al Señor con música y canto en el culto ordinario de los sábados a las 6:00 PM.",
+        orgKey: ALABANZA_SAB,
+      },
+      {
+        id: "alabanza-domingos",
+        name: "Grupo de Alabanza — Domingos",
+        desc: "Hermanos que sirven al Señor con música y canto en el culto dominical de los domingos a las 6:00 PM.",
+        orgKey: ALABANZA_DOM,
+      },
+    ],
   },
   {
     id: "audio",
-    name: "Ministerio de Audio",
+    name: "Equipo de Audio",
     desc: "Equipo encargado del sonido y la imagen en cada culto y actividad de la iglesia.",
     icon: "🎚",
     orgKey: AUDIO,
@@ -902,13 +920,6 @@ export const MINISTRIES: Ministry[] = [
     desc: "Hermanos responsables del cuidado, orden y seguridad del templo en cada actividad.",
     icon: "🏛",
     orgKey: GUARDATEMPLO,
-  },
-  {
-    id: "alabanza-domingos",
-    name: "Ministerio de Alabanza — Domingos",
-    desc: "Hermanos que sirven al Señor con música y canto en el culto dominical de los domingos a las 6:00 PM.",
-    icon: "🎶",
-    orgKey: ALABANZA_DOM,
   },
   {
     id: "coro",
@@ -933,6 +944,18 @@ export const MINISTRIES: Ministry[] = [
   },
 ];
 
+// Total de integrantes de un ministerio (suma los subgrupos sin duplicar personas).
+export function getMinistryMembersCount(ministry: Ministry): number {
+  if (ministry.subgroups?.length) {
+    const ids = new Set<string>();
+    for (const sub of ministry.subgroups) {
+      for (const person of getPeopleByOrg(sub.orgKey)) ids.add(person.id);
+    }
+    return ids.size;
+  }
+  return getPeopleByOrg(ministry.orgKey).length;
+}
+
 // Agrupación visual de los ministerios en la sección pública.
 // Cada grupo muestra un título propio; los ministerios se listan por su `id`.
 export type MinistryGroup = {
@@ -945,12 +968,12 @@ export const MINISTRY_GROUPS: MinistryGroup[] = [
   {
     id: "cantos-alabanza",
     heading: "Ministerio de Cantos de Alabanza",
-    ministryIds: ["coro", "coro-infantil", "alabanza-domingos", "alabanza-sabados", "musica"],
+    ministryIds: ["coro", "coro-infantil", "musica"],
   },
   {
     id: "logistica",
     heading: "Logística",
-    ministryIds: ["audio", "guardatemplo"],
+    ministryIds: ["grupo-alabanza", "audio", "guardatemplo"],
   },
 ];
 
@@ -1028,47 +1051,15 @@ export const EVENT_CATEGORY_LABELS: Record<EventCategory, string> = {
 
 export const EVENTS: ChurchEvent[] = [
   {
-    id: "ebv-2026",
-    title: "Escuela Bíblica de Vacaciones",
-    date: "2026-07-07",
-    time: "09:00",
-    endTime: "12:00",
-    location: "Templo El Divino Redentor",
+    id: "dia-del-pastor-2026",
+    title: "Día del Pastor",
+    date: "2026-08-29",
+    time: "18:00",
+    location: "Divino Redentor",
     description:
-      "Una semana de aprendizaje, juegos y enseñanza bíblica para los niños de la congregación y la comunidad.",
-    category: "formacion",
-    featured: true,
-  },
-  {
-    id: "semana-hogar-2026",
-    title: "Semana del Hogar",
-    date: "2026-08-10",
-    time: "19:00",
-    location: "Templo El Divino Redentor",
-    description:
-      "Mensajes especiales dedicados a la familia cristiana y al fortalecimiento del hogar.",
+      "Celebramos el Día del Pastor, agradeciendo a nuestro pastor Santiago Chay por cuidar y enseñar a la iglesia.",
     category: "especial",
-  },
-  {
-    id: "aniversario-2026",
-    title: "Aniversario de la Iglesia",
-    date: "2026-09-20",
-    time: "10:00",
-    location: "Templo El Divino Redentor",
-    description:
-      "Celebración de gratitud por los años de fidelidad del Señor a nuestra congregación.",
-    category: "aniversario",
     featured: true,
-  },
-  {
-    id: "reunion-juvenil-mayo",
-    title: "Reunión Juvenil",
-    date: "2026-05-30",
-    time: "19:30",
-    location: "Templo El Divino Redentor",
-    description:
-      "Encuentro semanal de jóvenes con alabanza, palabra y comunión. Todos los sábados a las 7:30 PM.",
-    category: "juvenil",
   },
 ];
 
