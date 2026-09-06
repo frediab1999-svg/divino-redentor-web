@@ -69,11 +69,13 @@ export function MinistryModal({
       <div className="relative z-10 bg-card border border-border rounded-xl shadow-lg w-full max-w-lg max-h-[90dvh] flex flex-col animate-in zoom-in-95 fade-in duration-200">
         {/* Header */}
         <div className="px-8 pt-8 pb-5 border-b border-border shrink-0">
+          {/* Dentro de un subgrupo la X retrocede al selector de grupos; solo
+              cierra el ministerio cuando ya se está en el primer nivel. */}
           <button
             type="button"
-            onClick={onClose}
+            onClick={subgroup ? onBackToGroups : onClose}
             className="absolute top-4 right-4 h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-secondary transition"
-            aria-label="Cerrar"
+            aria-label={subgroup ? `Volver a ${ministry.name}` : "Cerrar"}
           >
             <svg
               width="16"
