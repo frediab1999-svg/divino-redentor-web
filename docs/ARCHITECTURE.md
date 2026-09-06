@@ -49,6 +49,7 @@ Patrones reutilizables transversales:
 - `SectionTitle` — encabezado consistente de cada sección (eyebrow + título + subtítulo).
 - `AnimatedSection` — anima la entrada de cualquier bloque al hacer scroll.
 - `PersonCard` — una sola tarjeta de persona con tres variantes (featured / primary / compact), reutilizada por todas las organizaciones.
+- `WeeklyRhythm` — franja azul "Nuestra semana" al inicio de Eventos. Lee `SCHEDULE` y marca el día en curso.
 
 ### 4. Bajo acoplamiento
 
@@ -150,10 +151,33 @@ Definido en `src/routes/index.tsx`:
 4. `#testimonios` — Testimonios de miembros
 5. `#liderazgo` — Organizaciones y personas
 6. `#ministerios` — Ministerios de servicio
-7. `#eventos` — Próximos y pasados
+7. `#eventos` — Franja "Nuestra semana" (ritmo semanal) + eventos especiales, próximos y pasados
 8. `#galeria` — Galería con filtro por categoría
-9. `#contacto` — Horarios, ubicación y WhatsApp
+9. `#contacto` — Horarios, ensayos de coro, ubicación y redes
 10. Footer
+
+### 10. Dos tipos de tiempo, dos tratamientos visuales
+
+La sección Eventos distingue dos clases de información que **no se mezclan**:
+
+| | Qué responde | Dónde vive | Cómo se ve |
+|---|---|---|---|
+| **Recurrente** (`SCHEDULE`, `CHOIR_REHEARSALS`) | "¿Cuándo puedo venir?" | Franja `WeeklyRhythm` + tarjeta de Contacto | Franja azul (`bg-primary`) a todo lo ancho, sin marcos de tarjeta |
+| **Datado** (`EVENTS`) | "¿Qué pasa pronto?" | Tarjetas de `EventsSection` | Fondo claro, tarjeta con bloque de calendario y estado |
+
+El cambio de fondo es lo que los separa: un culto semanal no tiene fecha única, así que no puede compartir el componente `EventCard`, que se apoya en `date` para ordenar, clasificar y mostrar el estado. Por eso el ritmo semanal se resuelve con una pieza propia, deliberadamente más pequeña y de encabezado menor, para no competir con el título "Eventos especiales".
+
+### 11. Modales apilados y botón "Atrás"
+
+Los modales del sitio (organización, ministerio, subgrupo y perfil) se apilan, y cada capa que se abre **empuja una entrada en el historial** del navegador mediante `useHistoryModal`:
+
+```
+Ministerio  →  Subgrupo (coro / grupo de alabanza)  →  Perfil de persona
+```
+
+- El gesto "Atrás" del móvil, la tecla `Escape` y la **X** retroceden **una** capa: desde un coro se vuelve al listado de grupos, no se sale del sitio.
+- Clic en el fondo oscuro = descartar todo; al cerrar varias capas de golpe, `closeLayer(fn, n)` descarta las `n` entradas del historial para que no quede desalineado.
+- `useBodyScrollLock` mantiene un contador compartido, de modo que el scroll del `body` se libera solo cuando se cierra la última capa.
 
 ## Despliegue y SSR
 

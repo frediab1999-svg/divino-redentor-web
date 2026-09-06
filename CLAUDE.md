@@ -43,7 +43,9 @@ Todos los datos de la iglesia viven aquí. Para actualizar cualquier informació
 | `ORGS` | `OrgConfig[]` | Organizaciones (Consistorio, Diaconado, EFC, Femenil, Juvenil) |
 | `MINISTRIES` | `Ministry[]` | Ministerios de servicio |
 | `EVENTS` | `ChurchEvent[]` | Eventos con fecha, hora y categoría |
-| `SCHEDULE` | array | Horarios semanales de culto |
+| `SCHEDULE` | array | Horarios semanales de culto (`short` = nombre corto para la franja "Nuestra semana") |
+| `CHOIR_REHEARSALS` | array | Ensayos de los coros (solo se muestran en Contacto) |
+| `MINISTRY_GROUPS` | `MinistryGroup[]` | Agrupación visual de los ministerios: "Música" y "Logística" |
 | `LOCATION` | object | Nombre, dirección y link a Google Maps |
 | `GALLERY_PHOTOS` | `GalleryPhoto[]` | Fotos de galería (archivos en `public/gallery/`, ruta `/gallery/...`; src vacío = placeholder) |
 | `HISTORY_BLOCKS` | `HistoryBlock[]` | Bloques de historia; cada uno con `content: (párrafo \| cita)[]` |
@@ -51,6 +53,7 @@ Todos los datos de la iglesia viven aquí. Para actualizar cualquier informació
 | `CHURCH_STATS` | object | Estadísticas: miembros, año de fundación, etc. |
 | `WHATSAPP_URL` | string | URL de contacto de WhatsApp |
 | `FACEBOOK_URL` | string | URL de la página oficial de Facebook |
+| `INSTAGRAM_URL` | string | URL del perfil oficial de Instagram |
 
 ### Modelo `Person` y visibilidad
 
@@ -87,16 +90,17 @@ Opcionales de `OrgConfig`: `bibleRefs` (base bíblica bajo la descripción) y `c
 | `OrgDetailPanel` | Liderazgo | Detalle de una organización con tarjetas de personas |
 | `PersonCard` | Liderazgo | Tarjeta de persona (featured/primary/compact) |
 | `ProfileModal` | Liderazgo | Modal con detalle de una persona |
-| `MinistriesSection` | Ministerios | Grid de ministerios con `MinistryModal` |
-| `MinistryModal` | Ministerios | Modal con miembros de un ministerio |
-| `EventsSection` | Eventos | Eventos próximos y pasados con filtros |
+| `MinistriesSection` | Ministerios | Ministerios agrupados por `MINISTRY_GROUPS`, con `MinistryModal` |
+| `MinistryModal` | Ministerios | Modal con los subgrupos y miembros de un ministerio |
+| `WeeklyRhythm` | Eventos | Franja navy "Nuestra semana": los cultos de `SCHEDULE` en columnas, marcando el día en curso |
+| `EventsSection` | Eventos | Franja semanal + eventos especiales (próximos y pasados) |
 | `GallerySection` | Galería | Galería con filtro por categoría |
 
 ## Hooks personalizados
 
 - `use-intersection.ts` — detecta cuando un elemento entra al viewport (IntersectionObserver)
 - `use-count-up.ts` — animación de conteo numérico para `StatsSection`
-- `use-history-modal.ts` — integra los modales con el historial: el botón "Atrás" (o el gesto de retroceso en móvil) cierra el modal superior en vez de salir de la página. Lo usan `LeadershipSection` y `MinistriesSection`.
+- `use-history-modal.ts` — integra los modales con el historial: el botón "Atrás" (o el gesto de retroceso en móvil) cierra el modal superior en vez de salir de la página. Cada capa que se abre empuja una entrada (ministerio → subgrupo → perfil); `closeLayer(fn, n)` descarta varias de golpe cuando se cierra todo desde el fondo. Lo usan `LeadershipSection` y `MinistriesSection`.
 - `use-body-scroll-lock.ts` — bloqueo de scroll del `body` con contador compartido, para modales apilados (organización/ministerio + perfil).
 
 ## Estructura de la página (`routes/index.tsx`)
@@ -109,9 +113,9 @@ Single-page con secciones en este orden, navegables por anchor:
 4. `#testimonios` — Testimonios de miembros
 5. `#liderazgo` — Organizaciones y liderazgo
 6. `#ministerios` — Ministerios de servicio
-7. `#eventos` — Próximos eventos
+7. `#eventos` — Franja "Nuestra semana" + eventos especiales
 8. `#galeria` — Galería fotográfica
-9. `#contacto` — Horarios, ubicación y WhatsApp
+9. `#contacto` — Horarios agrupados por día, ensayos de coro, ubicación y redes
 10. Footer con navegación
 
 ## Convenciones de desarrollo
@@ -141,8 +145,10 @@ npm run format    # Prettier
 - **Miembros aprox.**: 150
 - **Campos**: San Francisco Tzon y Sitilpech (bajo cuidado de ancianos encargados)
 - **Pastor**: Santiago Chay Perera
-- **Contacto**: WhatsApp +52 1 988 105 3003 · Facebook /eldivinoredentorkimbila
+- **Contacto**: WhatsApp +52 1 988 105 3003 · Facebook /eldivinoredentorkimbila · Instagram @el_divino_redentor_kimbila
 - **Cultos**: Miércoles 7pm (oración), Sábado 6pm (ordinario), Sábado 7:30pm (juvenil), Domingo 10am (EFC), Domingo 6pm (dominical)
+- **Ministerios**: agrupados en *Música* (Ministro de Música con sus dos coros, Seminarista de Música, Grupo de Alabanza con sus dos grupos) y *Logística* (Equipo de Audio, Guardatemplo)
+
 ## Reglas para rediseño UI/UX
 
 Cuando se pidan cambios visuales o de experiencia de usuario:
