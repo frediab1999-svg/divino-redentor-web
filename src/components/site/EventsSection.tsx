@@ -11,6 +11,7 @@ import {
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
 import { MapPinIcon } from "./section-icons";
+import { WeeklyRhythm } from "./WeeklyRhythm";
 
 const STATUS_CONFIG: Record<EventStatus, { label: string; dot: string }> = {
   today: { label: "Hoy", dot: "bg-gold" },
@@ -106,6 +107,10 @@ export function EventsSection() {
             title="Próximos eventos"
             subtitle="Toda la congregación y la comunidad están cordialmente invitadas a estas actividades."
           />
+        </AnimatedSection>
+
+        <AnimatedSection>
+          <WeeklyRhythm />
         </AnimatedSection>
 
         {upcoming.length > 0 ? (

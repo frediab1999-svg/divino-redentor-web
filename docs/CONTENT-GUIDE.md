@@ -139,8 +139,8 @@ Una persona puede pertenecer a **varias** organizaciones agregando más objetos 
 
 ```ts
 roles: [
-  { organization: "Ministerio de Música", position: "Ministra de Música" },
-  { organization: "Coro de la Iglesia", position: "Directora" },
+  { organization: "Ministerio de Música", position: "Ministro de Música" },
+  { organization: "Coro Iglesia Canto de Libertad", position: "Directora" },
 ],
 ```
 

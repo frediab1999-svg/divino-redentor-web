@@ -1,4 +1,5 @@
-import { SCHEDULE, LOCATION, WHATSAPP_URL, FACEBOOK_URL } from "@/data/church";
+import { useEffect, useState } from "react";
+import { SCHEDULE, CHOIR_REHEARSALS, LOCATION, WHATSAPP_URL, FACEBOOK_URL } from "@/data/church";
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
 import { MapPinIcon, WhatsAppIcon, FacebookIcon } from "./section-icons";
@@ -59,6 +60,97 @@ function MapPreview() {
   );
 }
 
+// Día de la semana según Date.getDay() (0 = domingo), para marcar "Hoy".
+const DAY_INDEX: Record<string, number> = {
+  Domingo: 0,
+  Lunes: 1,
+  Martes: 2,
+  Miércoles: 3,
+  Jueves: 4,
+  Viernes: 5,
+  Sábado: 6,
+};
+
+// Los cultos se agrupan por día para que el visitante lea la semana de un
+// vistazo ("el sábado hay dos") en vez de una lista plana de cinco renglones.
+function groupScheduleByDay() {
+  const groups: { day: string; items: typeof SCHEDULE }[] = [];
+  for (const item of SCHEDULE) {
+    const last = groups[groups.length - 1];
+    if (last && last.day === item.day) last.items.push(item);
+    else groups.push({ day: item.day, items: [item] });
+  }
+  return groups;
+}
+
+function ScheduleCard() {
+  // El día se calcula tras montar para no desincronizar el HTML del servidor.
+  const [today, setToday] = useState<number | null>(null);
+  useEffect(() => setToday(new Date().getDay()), []);
+
+  return (
+    <div className="bg-card border border-border rounded-lg p-7 h-full">
+      <p className="text-xs uppercase tracking-[0.25em] text-gold mb-6">Horarios de culto</p>
+
+      <div className="space-y-5">
+        {groupScheduleByDay().map(({ day, items }) => {
+          const isToday = today !== null && DAY_INDEX[day] === today;
+          return (
+            <div key={day} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
+              <div className="flex items-center gap-2 mb-2.5">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-primary/50">{day}</p>
+                {isToday && (
+                  <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-gold">
+                    <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+                    Hoy
+                  </span>
+                )}
+              </div>
+              <ul className="space-y-2">
+                {items.map((s) => (
+                  <li key={s.label} className="flex items-baseline justify-between gap-4">
+                    <span className="font-display text-primary text-sm leading-snug">
+                      {s.label}
+                    </span>
+                    <span className="text-sm font-medium text-gold shrink-0 whitespace-nowrap">
+                      {s.time}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="text-xs uppercase tracking-[0.25em] text-gold mt-8 mb-4">Ensayo de coro</p>
+      <ul className="space-y-3">
+        {CHOIR_REHEARSALS.map((c) => (
+          <li
+            key={c.choir}
+            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
+          >
+            <span className="font-display text-primary text-sm leading-snug min-w-0">
+              {c.choir}
+            </span>
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1 shrink-0">
+              {c.times.map((t) => (
+                <span
+                  key={`${c.choir}-${t.day}-${t.time}`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary/40 px-2 py-0.5 text-[11px] text-muted-foreground whitespace-nowrap"
+                >
+                  {t.day}
+                  <span className="font-medium text-gold">{t.time}</span>
+                </span>
+              ))}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function ContactSection() {
   return (
     <section id="contacto" className="py-24 px-6 lg:px-10">
@@ -74,25 +166,7 @@ export function ContactSection() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Horarios */}
           <AnimatedSection>
-            <div className="bg-card border border-border rounded-lg p-7 h-full">
-              <p className="text-xs uppercase tracking-[0.25em] text-gold mb-5">
-                Horarios de culto
-              </p>
-              <ul className="space-y-0">
-                {SCHEDULE.map((s) => (
-                  <li
-                    key={s.label}
-                    className="flex items-center justify-between gap-4 py-3 border-b border-border last:border-b-0"
-                  >
-                    <div className="min-w-0">
-                      <span className="font-display text-primary text-sm">{s.label}</span>
-                      <span className="ml-2 text-xs text-muted-foreground">{s.day}</span>
-                    </div>
-                    <span className="text-sm font-medium text-gold shrink-0">{s.time}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ScheduleCard />
           </AnimatedSection>
 
           {/* Ubicación + WhatsApp */}
