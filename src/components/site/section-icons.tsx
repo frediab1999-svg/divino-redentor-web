@@ -145,6 +145,26 @@ export function FacebookIcon({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+// Instagram — glifo de trazo (marco, lente y punto del flash).
+export function InstagramIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="2" y="2" width="20" height="20" rx="5.5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 // WhatsApp — glifo sólido (CTA de contacto).
 export function WhatsAppIcon({ className = "h-4 w-4" }: IconProps) {
   return (

@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import { SCHEDULE, CHOIR_REHEARSALS, LOCATION, WHATSAPP_URL, FACEBOOK_URL } from "@/data/church";
+import {
+  SCHEDULE,
+  CHOIR_REHEARSALS,
+  LOCATION,
+  WHATSAPP_URL,
+  FACEBOOK_URL,
+  INSTAGRAM_URL,
+} from "@/data/church";
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
-import { MapPinIcon, WhatsAppIcon, FacebookIcon } from "./section-icons";
+import { MapPinIcon, WhatsAppIcon, FacebookIcon, InstagramIcon } from "./section-icons";
 
 // Vista visual tipo mapa (inspiración Stitch). Sin iframe real ni librerías:
 // fondo navy + líneas sutiles + tarjeta flotante. Enlaza a LOCATION.mapsUrl.
@@ -195,7 +202,16 @@ export function ContactSection() {
                     className="inline-flex items-center justify-center gap-2 border border-primary/30 text-primary px-6 py-3 rounded-md font-medium hover:bg-primary/5 transition-colors text-sm"
                   >
                     <FacebookIcon className="h-4 w-4" />
-                    Síguenos en Facebook
+                    Facebook
+                  </a>
+                  <a
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 border border-primary/30 text-primary px-6 py-3 rounded-md font-medium hover:bg-primary/5 transition-colors text-sm"
+                  >
+                    <InstagramIcon className="h-4 w-4" />
+                    Instagram
                   </a>
                 </div>
               </div>

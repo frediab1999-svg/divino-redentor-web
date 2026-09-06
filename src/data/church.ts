@@ -1,6 +1,7 @@
 // ─── CONTACTO ────────────────────────────────────────────────────────────────
 export const WHATSAPP_URL = "https://wa.me/5219881053003";
 export const FACEBOOK_URL = "https://www.facebook.com/eldivinoredentorkimbila";
+export const INSTAGRAM_URL = "https://www.instagram.com/el_divino_redentor_kimbila";
 
 // ─── ESTADÍSTICAS ─────────────────────────────────────────────────────────────
 export const CHURCH_STATS = {
