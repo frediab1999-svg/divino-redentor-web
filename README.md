@@ -2,6 +2,8 @@
 
 Landing page institucional de la **Iglesia Nacional Presbiteriana El Divino Redentor**, ubicada en Kimbilá, Izamal, Yucatán, México.
 
+🌐 **Sitio en línea:** https://tanstack-start-app.el-divino-redentor-kimbila.workers.dev
+
 ## ¿Qué es este proyecto?
 
 Es un sitio web de una sola página (single-page) que presenta la información pública de la iglesia: historia, estadísticas de la congregación, testimonios, liderazgo, ministerios, horarios de culto, eventos, galería fotográfica y datos de contacto.
@@ -92,19 +94,21 @@ Para desarrollo del día a día basta con `npm run dev`. Antes de subir cambios,
 ## Estado del repositorio y ramas
 
 > [!IMPORTANT]
-> Este proyecto se sube inicialmente a la rama **`develop`**.
+> - **`main`** es la rama **oficial y publicada**: lo que está aquí es lo que ven los visitantes. Se despliega desde ella.
+> - **`develop`** y las ramas `feat/*` son para trabajar. Se fusionan a `main` cuando el cambio está revisado.
 >
-> - **`develop`** es la rama de trabajo actual. Aquí se integran los cambios mientras el sitio sigue en preparación.
-> - **`main`** será la versión oficial del proyecto completo, pero **todavía no lo es**. No se debe asumir que el contenido de `main` está terminado ni listo para publicar.
->
-> Cuando el sitio se considere completo y aprobado, se hará un Pull Request de `develop` a `main`. Ver [docs/WORKFLOW.md](docs/WORKFLOW.md).
+> Ver [docs/WORKFLOW.md](docs/WORKFLOW.md).
 
 ## Despliegue (resumen)
 
-El proyecto está preparado para desplegarse en **Cloudflare Workers** mediante Wrangler (`npx wrangler deploy`).
+El sitio está publicado en **Cloudflare Workers**. Para subir una actualización, desde `main`:
 
-> [!NOTE]
-> **Este repositorio no se va a desplegar todavía.** El despliegue se hará únicamente cuando se decida de forma oficial. Los detalles completos están en [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+```bash
+npm run lint && npm run build
+npx wrangler deploy
+```
+
+Cada despliegue reemplaza la versión en vivo. Si algo sale mal, se vuelve atrás con `npx wrangler rollback`. Detalles completos en [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Licencia y uso
 

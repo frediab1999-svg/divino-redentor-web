@@ -14,7 +14,7 @@ Listas de verificación rápidas. Úsalas antes de cada acción importante.
 
 ## ✅ Antes de subir a GitHub
 
-- [ ] Estás en la rama correcta (`develop` o una `feature/*`), **no** en `main`.
+- [ ] Estás en la rama que corresponde al cambio (`develop` o una `feat/*`; `main` solo para lo aprobado).
 - [ ] Revisaste el diff (`git diff`, `git diff --staged`).
 - [ ] No hay secretos, números privados ni datos reales que no deban publicarse.
 - [ ] La privacidad de las personas está respetada (`role-only` / `hidden` donde corresponde).
@@ -40,13 +40,14 @@ Listas de verificación rápidas. Úsalas antes de cada acción importante.
 
 ## ✅ Antes de hacer deploy
 
-> Recordatorio: este repositorio **no se despliega todavía**. Esta lista aplica solo cuando se decida oficialmente.
+> El despliegue **reemplaza el sitio en vivo**. Revisa esta lista cada vez.
 
-- [ ] El sitio está completo y aprobado.
-- [ ] `develop` se fusionó a `main` vía Pull Request (ver [WORKFLOW.md](WORKFLOW.md)).
+- [ ] El cambio está revisado y aprobado.
+- [ ] Estoy en `main` y con todo fusionado (ver [WORKFLOW.md](WORKFLOW.md)).
 - [ ] `npm run lint` y `npm run build` pasan.
-- [ ] Probé el build con `npm run preview`.
-- [ ] WhatsApp y enlace de Google Maps son los reales.
-- [ ] El `name` del Worker en `wrangler.jsonc` es el correcto.
+- [ ] Probé el resultado con `npm run dev` (o `npm run preview`), **en escritorio y en móvil**.
+- [ ] WhatsApp, Facebook, Instagram y el enlace de Google Maps son los reales.
+- [ ] La privacidad de las personas está respetada (`role-only` / `hidden`).
 - [ ] Estoy autenticado en Cloudflare (`npx wrangler login`).
-- [ ] No hay secretos versionados; los secretos de producción se configuran en Cloudflare.
+- [ ] Tras desplegar, abrí el sitio y revisé la sección que cambié.
+- [ ] Si algo falla, sé cómo volver atrás: `npx wrangler rollback`.

@@ -1,9 +1,32 @@
 # Despliegue (Cloudflare Workers)
 
-Cómo se construye y se despliega el sitio. **Está preparado para Cloudflare Workers**, pero ver primero la nota de estado.
+Cómo se construye y se despliega el sitio en Cloudflare Workers.
 
 > [!IMPORTANT]
-> **Este repositorio no se va a desplegar todavía.** El despliegue se hará únicamente cuando se decida de forma oficial (típicamente desde la rama `main`, ver [WORKFLOW.md](WORKFLOW.md)). Este documento describe el proceso para cuando llegue ese momento.
+> **El sitio ya está publicado y en línea:**
+> https://tanstack-start-app.el-divino-redentor-kimbila.workers.dev
+>
+> Se despliega desde la rama `main`. Cada `npx wrangler deploy` **reemplaza la versión en vivo**, así que solo se ejecuta cuando el cambio está revisado y aprobado.
+
+## Cómo publicar una actualización
+
+```bash
+git switch main            # el despliegue sale siempre de main
+npm run lint               # 1. revisar
+npm run build              # 2. compilar
+npx wrangler deploy        # 3. publicar
+```
+
+Al terminar, Wrangler imprime la URL y el *Version ID*. Abre el sitio y revisa la sección que cambiaste.
+
+### Si algo sale mal: volver a la versión anterior
+
+```bash
+npx wrangler deployments list                 # ver el historial y copiar el Version ID bueno
+npx wrangler rollback --version-id <ID>       # volver a esa versión
+```
+
+El *rollback* es inmediato y no requiere recompilar.
 
 ## Cómo está configurado
 
