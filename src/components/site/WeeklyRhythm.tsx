@@ -20,9 +20,10 @@ const DAY_INDEX: Record<string, number> = {
 };
 
 /**
- * Banda "Cada semana": el ritmo semanal de la congregación en un vistazo, al
- * inicio de la agenda. No sustituye a los horarios de Contacto (que llevan el
- * detalle y los ensayos de coro): los anticipa y enlaza hacia ellos.
+ * Franja "Nuestra semana": el ritmo semanal de la congregación en un vistazo,
+ * al entrar a la agenda. Va sobre el navy de la marca y a todo lo ancho para
+ * que el color —y no un marco de tarjeta— la separe de los eventos con fecha
+ * que vienen debajo. El detalle completo (y los ensayos) sigue en Contacto.
  */
 export function WeeklyRhythm() {
   // El día se calcula tras montar para no desincronizar el HTML del servidor.
@@ -30,44 +31,56 @@ export function WeeklyRhythm() {
   useEffect(() => setToday(new Date().getDay()), []);
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 sm:p-7 mb-10">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 mb-5">
-        <p className="text-[11px] uppercase tracking-[0.25em] text-gold">Cada semana</p>
-        <a
-          href="#contacto"
-          className="text-xs text-muted-foreground hover:text-gold transition-colors"
-        >
-          Ensayos de coro y ubicación →
-        </a>
-      </div>
+    <div className="bg-primary text-primary-foreground">
+      <div className="max-w-6xl mx-auto px-6 lg:px-10 py-14 md:py-16">
+        <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4 mb-9">
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-gold mb-3">Nuestra semana</p>
+            <h2 className="font-display text-2xl md:text-3xl leading-tight">
+              Te esperamos cada semana
+            </h2>
+          </div>
+          <a
+            href="#contacto"
+            className="text-sm text-primary-foreground/70 hover:text-gold transition-colors"
+          >
+            Ensayos de coro y ubicación →
+          </a>
+        </div>
 
-      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
-        {SCHEDULE.map((s) => {
-          const isToday = today !== null && DAY_INDEX[s.day] === today;
-          return (
-            <li
-              key={s.label}
-              className={`rounded-lg border p-3 text-center transition-colors ${
-                isToday ? "border-gold bg-gold/5" : "border-border bg-secondary/40"
-              }`}
-            >
-              <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
-                {DAY_ABBR[s.day] ?? s.day}
-              </p>
-              <p className="mt-1 font-display text-lg sm:text-xl text-primary leading-none">
-                {s.time.replace(" ", " ")}
-              </p>
-              <p className="mt-1.5 text-xs text-primary/70 leading-snug">{s.short ?? s.label}</p>
-              {isToday && (
-                <p className="mt-1.5 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-gold">
-                  <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                  Hoy
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-y-8 lg:[&>li+li]:border-l lg:[&>li+li]:border-primary-foreground/10">
+          {SCHEDULE.map((s) => {
+            const isToday = today !== null && DAY_INDEX[s.day] === today;
+            return (
+              <li key={s.label} className="px-1 lg:px-5 text-center lg:text-left">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-primary-foreground/50">
+                  {DAY_ABBR[s.day] ?? s.day}
                 </p>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+                <p
+                  className={`mt-2 font-display text-2xl md:text-[1.75rem] leading-none whitespace-nowrap ${
+                    isToday ? "text-gold" : "text-primary-foreground"
+                  }`}
+                >
+                  {s.time}
+                </p>
+                <p className="mt-2 text-sm text-primary-foreground/75 leading-snug">
+                  {s.short ?? s.label}
+                </p>
+                {/* Subrayado dorado: marca el día en curso sin agregar un marco. */}
+                <span
+                  aria-hidden="true"
+                  className={`mt-4 block h-px mx-auto lg:mx-0 transition-all ${
+                    isToday ? "w-10 bg-gold" : "w-6 bg-primary-foreground/15"
+                  }`}
+                />
+                {isToday && (
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-gold">Hoy</p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }
