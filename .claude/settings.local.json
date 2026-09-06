@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(exit)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} — %{size_download} bytes\\\\n\" http://localhost:4173/)",
+      "Bash(curl -s http://localhost:4173/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} — %{size_download} bytes — %{content_type}\\\\n\" \"http://localhost:4173/gallery/605230236_846495228018946_4792313000231839081_n.jpg\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npx wrangler *)"
     ]
   }
 }

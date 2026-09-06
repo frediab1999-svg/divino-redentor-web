@@ -41,3 +41,4 @@ tmp/
 *.sln
 *.sw?
 .vercel
+.vite/

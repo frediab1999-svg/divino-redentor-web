@@ -11,6 +11,7 @@ import {
 import { SectionTitle } from "./SectionTitle";
 import { AnimatedSection } from "./AnimatedSection";
 import { MapPinIcon } from "./section-icons";
+import { WeeklyRhythm } from "./WeeklyRhythm";
 
 const STATUS_CONFIG: Record<EventStatus, { label: string; dot: string }> = {
   today: { label: "Hoy", dot: "bg-gold" },
@@ -98,13 +99,17 @@ export function EventsSection() {
   const past = getPastEvents(EVENTS);
 
   return (
-    <section id="eventos" className="py-24 px-6 lg:px-10">
-      <div className="max-w-6xl mx-auto">
+    <section id="eventos">
+      {/* Franja navy a todo lo ancho: el ritmo semanal, separado por color de
+          los eventos con fecha que vienen debajo sobre fondo claro. */}
+      <WeeklyRhythm />
+
+      <div className="max-w-6xl mx-auto px-6 lg:px-10 py-24">
         <AnimatedSection>
           <SectionTitle
             eyebrow="Agenda"
-            title="Próximos eventos"
-            subtitle="Toda la congregación y la comunidad están cordialmente invitadas a estas actividades."
+            title="Eventos especiales"
+            subtitle="Fechas puntuales del calendario de la congregación. Toda la comunidad está cordialmente invitada."
           />
         </AnimatedSection>
 

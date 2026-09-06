@@ -1,6 +1,6 @@
 import logo from "@/assets/logo-edr.png";
-import { LOCATION, WHATSAPP_URL, FACEBOOK_URL } from "@/data/church";
-import { MapPinIcon, WhatsAppIcon, FacebookIcon } from "./section-icons";
+import { LOCATION, WHATSAPP_URL, FACEBOOK_URL, INSTAGRAM_URL } from "@/data/church";
+import { MapPinIcon, WhatsAppIcon, FacebookIcon, InstagramIcon } from "./section-icons";
 
 const FOOTER_LINKS: [string, string][] = [
   ["#historia", "Historia"],
@@ -79,6 +79,15 @@ export function SiteFooter() {
               >
                 <FacebookIcon className="h-4 w-4" />
                 Facebook
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/25 px-4 py-2 text-sm hover:border-gold hover:text-gold transition-colors"
+              >
+                <InstagramIcon className="h-4 w-4" />
+                Instagram
               </a>
             </div>
           </div>

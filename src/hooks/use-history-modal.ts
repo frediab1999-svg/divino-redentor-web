@@ -9,6 +9,8 @@ import { useCallback, useEffect, useRef } from "react";
  * - `pushLayer()` cada vez que abras una capa de modal (organización, perfil…).
  * - `closeLayer(fn)` para cerrar una capa desde la UI (botón X, fondo, Escape):
  *   ejecuta `fn` (que actualiza tu estado) y retrocede una entrada del historial.
+ *   Con `layers` mayor a 1 cierra varias capas de golpe (ej. la X cierra a la vez
+ *   el subgrupo y su ministerio).
  * - `onBack` se ejecuta cuando el usuario pulsa "Atrás": debe cerrar la capa
  *   superior que esté abierta.
  */
@@ -34,10 +36,10 @@ export function useHistoryModal(onBack: () => void) {
     window.history.pushState({ modalLayer: true }, "");
   }, []);
 
-  const closeLayer = useCallback((fn: () => void) => {
+  const closeLayer = useCallback((fn: () => void, layers = 1) => {
     fn();
     skipPop.current = true;
-    window.history.back();
+    window.history.go(-layers);
   }, []);
 
   return { pushLayer, closeLayer };

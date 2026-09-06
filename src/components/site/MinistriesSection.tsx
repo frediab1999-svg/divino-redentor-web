@@ -4,6 +4,7 @@ import {
   MINISTRY_GROUPS,
   getMinistryMembersCount,
   type Ministry,
+  type MinistrySubgroup,
   type Person,
 } from "@/data/church";
 import { useHistoryModal } from "@/hooks/use-history-modal";
@@ -15,28 +16,48 @@ import { ProfileModal } from "./ProfileModal";
 
 export function MinistriesSection() {
   const [selectedMinistry, setSelectedMinistry] = useState<Ministry | null>(null);
+  // Subgrupo elegido dentro de un ministerio (ej. Alabanza — Sábados). Es una
+  // capa propia: "Atrás" vuelve al selector de grupos, no cierra el ministerio.
+  const [selectedSubgroup, setSelectedSubgroup] = useState<MinistrySubgroup | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   const ministryRef = useRef(selectedMinistry);
   ministryRef.current = selectedMinistry;
+  const subgroupRef = useRef(selectedSubgroup);
+  subgroupRef.current = selectedSubgroup;
   const personRef = useRef(selectedPerson);
   personRef.current = selectedPerson;
 
   const { pushLayer, closeLayer } = useHistoryModal(() => {
     if (personRef.current) setSelectedPerson(null);
+    else if (subgroupRef.current) setSelectedSubgroup(null);
     else if (ministryRef.current) setSelectedMinistry(null);
   });
 
   const openMinistry = (m: Ministry) => {
     setSelectedMinistry(m);
+    setSelectedSubgroup(null);
     pushLayer();
   };
+  const openSubgroup = (sub: MinistrySubgroup) => {
+    setSelectedSubgroup(sub);
+    pushLayer();
+  };
+  const backToGroups = () => closeLayer(() => setSelectedSubgroup(null));
   // El perfil se abre ENCIMA del modal de ministerio (no lo cierra).
   const openPerson = (p: Person) => {
     setSelectedPerson(p);
     pushLayer();
   };
-  const closeMinistry = () => closeLayer(() => setSelectedMinistry(null));
+  // Cerrar el ministerio descarta también la capa del subgrupo, si estaba abierta.
+  const closeMinistry = () =>
+    closeLayer(
+      () => {
+        setSelectedMinistry(null);
+        setSelectedSubgroup(null);
+      },
+      selectedSubgroup ? 2 : 1,
+    );
   const closePerson = () => closeLayer(() => setSelectedPerson(null));
 
   const ministriesById = new Map(MINISTRIES.map((m) => [m.id, m]));
@@ -96,7 +117,8 @@ export function MinistriesSection() {
                               <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed line-clamp-2">
                                 {m.desc}
                               </p>
-                              <p className="mt-2 text-xs text-gold opacity-0 group-hover:opacity-100 transition-opacity">
+                              {/* En táctil no hay hover: la pista se ve siempre; en escritorio aparece al pasar el cursor. */}
+                              <p className="mt-2 text-xs text-gold opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-visible:opacity-100 transition-opacity">
                                 {m.subgroups?.length ? "Ver grupos →" : "Ver integrantes →"}
                               </p>
                             </div>
@@ -114,6 +136,9 @@ export function MinistriesSection() {
 
       <MinistryModal
         ministry={selectedMinistry}
+        subgroup={selectedSubgroup}
+        onSelectSubgroup={openSubgroup}
+        onBackToGroups={backToGroups}
         active={!selectedPerson}
         onClose={closeMinistry}
         onSelectPerson={openPerson}

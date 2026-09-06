@@ -1,6 +1,7 @@
 // ─── CONTACTO ────────────────────────────────────────────────────────────────
 export const WHATSAPP_URL = "https://wa.me/5219881053003";
 export const FACEBOOK_URL = "https://www.facebook.com/eldivinoredentorkimbila";
+export const INSTAGRAM_URL = "https://www.instagram.com/el_divino_redentor_kimbila";
 
 // ─── ESTADÍSTICAS ─────────────────────────────────────────────────────────────
 export const CHURCH_STATS = {
@@ -156,8 +157,9 @@ const ALABANZA_SAB = "Grupo de Alabanza — Sábados";
 const ALABANZA_DOM = "Grupo de Alabanza — Domingos";
 const AUDIO = "Equipo de Audio";
 const MUSICA = "Ministerio de Música";
-const CORO = "Coro de la Iglesia";
-const CORO_INFANTIL = "Coro Infantil";
+const CORO = "Coro Iglesia Canto de Libertad";
+const CORO_INFANTIL = "Coro Infantil Joyas de Cristo";
+const SEMINARIO_MUSICA = "Seminarista de Música";
 const GUARDATEMPLO = "Guardatemplo";
 
 const HORARIO_EFC = "Domingos 10:00 AM";
@@ -486,15 +488,14 @@ export const PEOPLE: Person[] = [
   {
     id: "mildred-estefania-mex-uitzil",
     name: "Mildred Estefanía Mex Uitzil",
-    ecclesiasticalRole: "Seminarista",
+    ecclesiasticalRole: "Seminarista de Música",
     roles: [
+      { organization: SEMINARIO_MUSICA, position: "Seminarista de Música" },
+      { organization: CORO_INFANTIL, position: "Seminarista de Música" },
       { organization: JUVENIL, position: "Evangelismo" },
       { organization: ALABANZA_SAB, position: "Integrante", schedule: HORARIO_SAB },
-      { organization: AUDIO, position: "Integrante" },
       { organization: ALABANZA_DOM, position: "Integrante", schedule: HORARIO_DOM },
-      { organization: CORO, position: "Integrante" },
-      { organization: MUSICA, position: "Integrante" },
-      { organization: CORO_INFANTIL, position: "Integrante" },
+      { organization: AUDIO, position: "Integrante" },
     ],
   },
 
@@ -502,11 +503,11 @@ export const PEOPLE: Person[] = [
   {
     id: "addy-uitzil",
     name: "Addy Uitzil",
-    ecclesiasticalRole: "Ministra de Música",
+    ecclesiasticalRole: "Ministro de Música",
     roles: [
-      { organization: MUSICA, position: "Ministra de Música" },
+      { organization: MUSICA, position: "Ministro de Música" },
       { organization: CORO, position: "Directora" },
-      { organization: CORO_INFANTIL, position: "Responsable" },
+      { organization: CORO_INFANTIL, position: "Directora" },
     ],
   },
   {
@@ -922,25 +923,32 @@ export const MINISTRIES: Ministry[] = [
     orgKey: GUARDATEMPLO,
   },
   {
-    id: "coro",
-    name: "Coro de la Iglesia",
-    desc: "El coro principal de la congregación que ministra en cultos especiales y celebraciones.",
-    icon: "🎤",
-    orgKey: CORO,
-  },
-  {
     id: "musica",
-    name: "Ministerio de Música",
+    name: "Ministro de Música",
     desc: "Dirección musical de la iglesia, formación del coro y acompañamiento instrumental en los cultos.",
     icon: "🎼",
     orgKey: MUSICA,
+    subgroups: [
+      {
+        id: "coro",
+        name: "Coro Iglesia Canto de Libertad",
+        desc: "El coro principal de la congregación que ministra en cultos especiales y celebraciones.",
+        orgKey: CORO,
+      },
+      {
+        id: "coro-infantil",
+        name: "Coro Infantil Joyas de Cristo",
+        desc: "Niños y jóvenes que alaban al Señor con sus voces. Dirigido por el Ministro de Música.",
+        orgKey: CORO_INFANTIL,
+      },
+    ],
   },
   {
-    id: "coro-infantil",
-    name: "Coro Infantil",
-    desc: "Niños y jóvenes que alaban al Señor con sus voces. Dirigido por la Ministra de Música.",
-    icon: "👼",
-    orgKey: CORO_INFANTIL,
+    id: "seminarista-musica",
+    name: "Seminarista de Música",
+    desc: "Hermana en formación musical dentro del área de Música: apoya la dirección del ministerio, acompaña al Coro Infantil Joyas de Cristo y sirve en la alabanza de la iglesia.",
+    icon: "📖",
+    orgKey: SEMINARIO_MUSICA,
   },
 ];
 
@@ -948,6 +956,9 @@ export const MINISTRIES: Ministry[] = [
 export function getMinistryMembersCount(ministry: Ministry): number {
   if (ministry.subgroups?.length) {
     const ids = new Set<string>();
+    if (ministry.orgKey) {
+      for (const person of getPeopleByOrg(ministry.orgKey)) ids.add(person.id);
+    }
     for (const sub of ministry.subgroups) {
       for (const person of getPeopleByOrg(sub.orgKey)) ids.add(person.id);
     }
@@ -966,24 +977,51 @@ export type MinistryGroup = {
 
 export const MINISTRY_GROUPS: MinistryGroup[] = [
   {
-    id: "cantos-alabanza",
-    heading: "Ministerio de Cantos de Alabanza",
-    ministryIds: ["coro", "coro-infantil", "musica"],
+    id: "musica",
+    heading: "Música",
+    ministryIds: ["musica", "seminarista-musica", "grupo-alabanza"],
   },
   {
     id: "logistica",
     heading: "Logística",
-    ministryIds: ["grupo-alabanza", "audio", "guardatemplo"],
+    ministryIds: ["audio", "guardatemplo"],
   },
 ];
 
+// Encabezado del grupo al que pertenece un ministerio (ej. "Música", "Logística").
+export function getMinistryGroupHeading(ministryId: string): string | undefined {
+  return MINISTRY_GROUPS.find((g) => g.ministryIds.includes(ministryId))?.heading;
+}
+
 // ─── HORARIOS ─────────────────────────────────────────────────────────────────
+// `short` es el nombre corto para la banda "Cada semana" de la agenda, donde
+// cada culto ocupa una columna angosta. Si falta, se usa `label`.
 export const SCHEDULE = [
-  { day: "Miércoles", time: "7:00 PM", label: "Noche de Oración" },
-  { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario" },
-  { day: "Sábado", time: "7:30 PM", label: "Reunión Juvenil" },
-  { day: "Domingo", time: "10:00 AM", label: "Escuela de Formación Cristiana" },
-  { day: "Domingo", time: "6:00 PM", label: "Culto Dominical" },
+  { day: "Miércoles", time: "7:00 PM", label: "Noche de Oración", short: "Oración" },
+  { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario", short: "Culto Ordinario" },
+  { day: "Sábado", time: "7:30 PM", label: "Reunión Juvenil", short: "Juvenil" },
+  {
+    day: "Domingo",
+    time: "10:00 AM",
+    label: "Escuela de Formación Cristiana",
+    short: "Escuela de Formación",
+  },
+  { day: "Domingo", time: "6:00 PM", label: "Culto Dominical", short: "Culto Dominical" },
+];
+
+// Ensayos de los coros (se muestran junto a los horarios de culto en Contacto).
+export const CHOIR_REHEARSALS = [
+  {
+    choir: "Coro Iglesia Canto de Libertad",
+    times: [
+      { day: "Viernes", time: "7:00 PM" },
+      { day: "Sábado", time: "7:40 PM" },
+    ],
+  },
+  {
+    choir: "Coro Infantil Joyas de Cristo",
+    times: [{ day: "Sábado", time: "10:30 AM" }],
+  },
 ];
 
 export const LOCATION = {
@@ -1060,6 +1098,33 @@ export const EVENTS: ChurchEvent[] = [
       "Celebramos el Día del Pastor, agradeciendo a nuestro pastor Santiago Chay por cuidar y enseñar a la iglesia.",
     category: "especial",
     featured: true,
+  },
+  {
+    id: "noche-mexicana-2026",
+    title: "Noche Mexicana",
+    date: "2026-09-15",
+    location: "Divino Redentor",
+    description:
+      "Celebración de la Noche Mexicana con la congregación: convivencia, música y tradición en el marco de las fiestas patrias.",
+    category: "especial",
+  },
+  {
+    id: "comunion-2026-09",
+    title: "Comunión",
+    date: "2026-09-27",
+    location: "Divino Redentor",
+    description:
+      "Culto de Santa Cena, donde la congregación se reúne para participar de la mesa del Señor.",
+    category: "culto",
+  },
+  {
+    id: "reunion-consistorio-2026-09",
+    title: "Reunión de Consistorio",
+    date: "2026-09-28",
+    location: "Divino Redentor",
+    description:
+      "Reunión ordinaria del Consistorio para el gobierno y cuidado pastoral de la iglesia.",
+    category: "reunion",
   },
 ];
 

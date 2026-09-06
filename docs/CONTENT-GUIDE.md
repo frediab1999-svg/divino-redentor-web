@@ -139,8 +139,8 @@ Una persona puede pertenecer a **varias** organizaciones agregando más objetos 
 
 ```ts
 roles: [
-  { organization: "Ministerio de Música", position: "Ministra de Música" },
-  { organization: "Coro de la Iglesia", position: "Directora" },
+  { organization: "Ministerio de Música", position: "Ministro de Música" },
+  { organization: "Coro Iglesia Canto de Libertad", position: "Directora" },
 ],
 ```
 
@@ -258,7 +258,7 @@ Arreglo `MINISTRIES`. Cada ministerio:
 ```ts
 {
   id: "audio",
-  name: "Ministerio de Audio",
+  name: "Equipo de Audio",
   desc: "Equipo encargado del sonido y la imagen en cada culto y actividad de la iglesia.",
   icon: "🎚",
   orgKey: "Ministerio de Audio",
@@ -266,9 +266,46 @@ Arreglo `MINISTRIES`. Cada ministerio:
 ```
 
 - `orgKey` conecta el ministerio con las personas: debe coincidir con el `organization` que esas personas tengan en su lista `roles`.
-- `icon` es un emoji.
+- `icon` es un emoji (el ícono que se dibuja en pantalla se elige por `id` en `section-icons.tsx`).
 
 Para **agregar miembros** a un ministerio, no se editan aquí: se agregan en `PEOPLE` con un `role` cuyo `organization` sea igual al `orgKey`.
+
+### Ministerios con subgrupos
+
+Un ministerio puede tener varios grupos dentro. Se declaran en `subgroups`, y cada uno tiene su propio `orgKey`:
+
+```ts
+{
+  id: "grupo-alabanza",
+  name: "Grupo de Alabanza",
+  desc: "Hermanos que sirven al Señor con música y canto en los cultos...",
+  icon: "🎵",
+  orgKey: "",                       // vacío = el ministerio no tiene miembros propios
+  subgroups: [
+    { id: "alabanza-sabados",  name: "Grupo de Alabanza — Sábados",  desc: "...", orgKey: "Alabanza Sábados" },
+    { id: "alabanza-domingos", name: "Grupo de Alabanza — Domingos", desc: "...", orgKey: "Alabanza Domingos" },
+  ],
+}
+```
+
+Al pulsar el ministerio, el modal muestra primero la lista de grupos; al elegir uno, sus integrantes. Hoy tienen subgrupos **Ministro de Música** (Coro Canto de Libertad y Coro Infantil Joyas de Cristo) y **Grupo de Alabanza** (sábados y domingos).
+
+El conteo que aparece en la tarjeta lo calcula `getMinistryMembersCount()`: suma los subgrupos **sin duplicar** a quien sirve en más de uno.
+
+### Agrupación en pantalla: `MINISTRY_GROUPS`
+
+Los ministerios se muestran agrupados bajo encabezados. Esa agrupación es **solo visual** y se define aparte:
+
+```ts
+export const MINISTRY_GROUPS = [
+  { id: "musica",    heading: "Música",    ministryIds: ["musica", "seminarista-musica", "grupo-alabanza"] },
+  { id: "logistica", heading: "Logística", ministryIds: ["audio", "guardatemplo"] },
+];
+```
+
+- `heading` es el título visible del grupo. También es la etiqueta dorada que aparece dentro del modal (por eso ahí dice "Música" o "Logística", **no** "Ministerio").
+- `ministryIds` lista los `id` de `MINISTRIES` que caen en ese grupo, en orden.
+- Un ministerio que no esté en ningún grupo **no se muestra**. Al agregar uno nuevo, recuerda incluir su `id` aquí.
 
 ---
 
@@ -302,29 +339,68 @@ Arreglo `EVENTS`. El sitio decide automáticamente si un evento es "próximo" o 
 
 ---
 
-## Horarios
+## Horarios de culto
 
 Arreglo `SCHEDULE`. Cada renglón es un culto semanal:
 
 ```ts
 export const SCHEDULE = [
-  { day: "Miércoles", time: "7:00 PM", label: "Noche de Oración" },
-  { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario" },
+  { day: "Miércoles", time: "7:00 PM", label: "Noche de Oración", short: "Oración" },
+  { day: "Sábado", time: "6:00 PM", label: "Culto Ordinario", short: "Culto Ordinario" },
   // ...
 ];
 ```
 
-Edita `day`, `time` o `label`. Para agregar un culto, añade un objeto con el mismo formato.
+| Campo | Qué hace |
+|---|---|
+| `day` | Día escrito completo y con acento (`Miércoles`, `Sábado`, `Domingo`). **Debe escribirse así**: con ese texto el sitio detecta si el culto es hoy. |
+| `time` | Hora tal como se muestra (ej. `7:00 PM`). |
+| `label` | Nombre completo del culto. Es el que aparece en Contacto. |
+| `short` | Opcional. Nombre corto para la franja "Nuestra semana", donde cada culto ocupa una columna angosta. Si falta, se usa `label`. |
+
+**Dónde aparecen estos horarios (en dos lugares, con el mismo dato):**
+
+1. **Franja "Nuestra semana"** — banda azul al inicio de la sección Eventos. Muestra los cultos en columnas, para verlos de un vistazo.
+2. **Contacto** — la tarjeta "Horarios de culto", agrupada por día y con el detalle completo.
+
+En ambos, el **día en curso se marca solo** en dorado con la etiqueta "Hoy". Se calcula en el navegador del visitante y marca el día completo (no la hora): el sábado se marcan a la vez el Culto Ordinario y la Reunión Juvenil. No hay nada que actualizar a mano.
+
+Para agregar un culto, añade un objeto con el mismo formato. Ten en cuenta que la franja está pensada para **cinco columnas**: si agregas muchos más, conviene revisar cómo se ve.
 
 ---
 
-## Contacto (WhatsApp, Facebook) y ubicación
+## Ensayos de coro
+
+Arreglo `CHOIR_REHEARSALS`. Cada coro puede tener varios ensayos:
+
+```ts
+export const CHOIR_REHEARSALS = [
+  {
+    choir: "Coro Iglesia Canto de Libertad",
+    times: [
+      { day: "Viernes", time: "7:00 PM" },
+      { day: "Sábado", time: "7:40 PM" },
+    ],
+  },
+  {
+    choir: "Coro Infantil Joyas de Cristo",
+    times: [{ day: "Sábado", time: "10:30 AM" }],
+  },
+];
+```
+
+Aparecen **solo en Contacto**, bajo los horarios de culto, como etiquetas con día y hora. No se muestran en la franja "Nuestra semana" a propósito: esa franja responde "¿cuándo puedo visitar la iglesia?" y los ensayos son información para quien ya sirve en el coro. Desde la franja se llega a ellos con el enlace "Ensayos de coro y ubicación →".
+
+---
+
+## Contacto (WhatsApp, Facebook, Instagram) y ubicación
 
 Al inicio del archivo:
 
 ```ts
 export const WHATSAPP_URL = "https://wa.me/5219881053003";
 export const FACEBOOK_URL = "https://www.facebook.com/eldivinoredentorkimbila";
+export const INSTAGRAM_URL = "https://www.instagram.com/el_divino_redentor_kimbila";
 
 export const LOCATION = {
   name: "Iglesia Nacional Presbiteriana El Divino Redentor",
@@ -335,6 +411,7 @@ export const LOCATION = {
 
 - **WhatsApp**: formato `https://wa.me/` + código de país + número, sin espacios ni signos (`52` = México; el `1` después del `52` es el prefijo de celular). Aparece como botón en el Hero, la barra de navegación, Contacto y el pie de página.
 - **Facebook**: URL de la página oficial. Aparece como botón en Contacto y en el pie de página.
+- **Instagram**: URL del perfil oficial. Aparece junto a Facebook, en Contacto y en el pie de página. Usa siempre la dirección limpia del perfil (`instagram.com/usuario`): los enlaces que copia el botón "Compartir" traen parámetros de rastreo (`utm_source`, `stkn`) que no sirven aquí y pueden caducar.
 - **Mapa**: pega el enlace corto de Google Maps de la iglesia en `mapsUrl`.
 
 ---

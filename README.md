@@ -4,13 +4,15 @@ Landing page institucional de la **Iglesia Nacional Presbiteriana El Divino Rede
 
 ## ¿Qué es este proyecto?
 
-Es un sitio web de una sola página (single-page) que presenta la información pública de la iglesia: historia, estadísticas de la congregación, testimonios, liderazgo, ministerios, eventos próximos, galería fotográfica y datos de contacto.
+Es un sitio web de una sola página (single-page) que presenta la información pública de la iglesia: historia, estadísticas de la congregación, testimonios, liderazgo, ministerios, horarios de culto, eventos, galería fotográfica y datos de contacto.
+
+**Secciones de la página**, en orden: Inicio · Historia · Estadísticas · Testimonios · Liderazgo · Ministerios · Eventos (franja "Nuestra semana" + eventos especiales) · Galería · Contacto.
 
 ### Objetivo del sitio
 
 - **Informar** a visitantes y miembros sobre la iglesia, sus organizaciones y sus actividades.
 - **Invitar** a conocer la congregación y asistir a los cultos.
-- **Facilitar el contacto**, principalmente a través de WhatsApp.
+- **Facilitar el contacto**, principalmente a través de WhatsApp (también Facebook e Instagram).
 
 El sitio está pensado para ser fácil de mantener: **todo el contenido vive en un solo archivo de datos** (`src/data/church.ts`), de modo que actualizar textos, eventos o liderazgo no requiere tocar el diseño ni la lógica.
 
